@@ -10,6 +10,20 @@ HAMPSHIRE_SOLENT_LAS = [
 ]
 ALL_LAS = sorted(set(MID_HAMPSHIRE_LAS) | set(HAMPSHIRE_SOLENT_LAS))
 
+# Hampshire County Council's own area today: the 11 current districts, i.e. Hampshire and the
+# Solent minus the three unitary councils (Portsmouth, Southampton, Isle of Wight) that sit
+# outside the county council's two-tier structure. Requested by Phil so the site can speak to
+# "Hampshire" as a whole ahead of a conversation with the county's leader. DESNZ's own emissions
+# spreadsheets carry a pre-aggregated "Hampshire total" row (the "Second Tier Authority" column),
+# but summing these 11 district rows through the same REGION_DEFS machinery as every other region
+# on this site reproduces that figure exactly, without a second, differently-shaped source file —
+# and energy consumption/generation have no such pre-aggregated row to begin with, so district
+# summation is the only method available for those regardless.
+HAMPSHIRE_LAS = [
+    "Basingstoke and Deane", "East Hampshire", "Eastleigh", "Fareham", "Gosport", "Hart", "Havant",
+    "New Forest", "Rushmoor", "Test Valley", "Winchester"
+]
+
 # 2021 Census parish population (ONS/Nomis "Parish data, England and Wales: Census 2021",
 # dataset NM_2352_1, boundaries as at December 2022), for the 11 parishes moving from these
 # four districts to South-West/South-East Hampshire under the LGR decision of 25 March 2026.
@@ -94,6 +108,14 @@ REGION_DEFS = [
      "group": "current-unitary", "parent": "south-east-hampshire"},
     {"key": "southampton", "name": "Southampton", "las": ["Southampton"], "weight": None,
      "group": "current-unitary", "parent": "south-west-hampshire"},
+
+    # "county" is its own tier, not "current-unitary": Hampshire's total (11 districts) dwarfs any
+    # single current unitary, so sharing a fixed-scale axis with Portsmouth/Southampton/Isle of
+    # Wight would squash their bars. It's also excluded from regionChildren() in app.js despite
+    # `parent` pointing here, since it overlaps ~80% with North/Mid/South-East/South-West Hampshire
+    # rather than being a fifth, non-overlapping partition member — see that exclusion's comment.
+    {"key": "hampshire", "name": "Hampshire", "las": HAMPSHIRE_LAS, "weight": None,
+     "group": "county", "parent": "hampshire-solent"},
 
     {"key": "winchester", "name": "Winchester", "las": ["Winchester"], "weight": None,
      "group": "historic-district", "parent": "mid-hampshire"},

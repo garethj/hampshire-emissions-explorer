@@ -190,7 +190,7 @@ window.MHE_ENERGY_DATA = {
   "note_suppression": "DESNZ suppresses some small per-technology generation cells (marked \"[X]\" in the source workbook) to avoid revealing individual plants' output. This site treats suppressed cells as 0 for their own technology group and adds the (small) gap between the visible columns and DESNZ's own published Total into the \"Other\" group, so technology totals always sum exactly to DESNZ's published local authority total. The consumption-by-fuel dataset has no equivalent suppression.",
   "note_ktoe_conversion": "Energy consumption is published in ktoe (kilotonnes of oil equivalent); electricity_consumption_mwh converts the Electricity fuel category to MWh using the standard DUKES/IEA factor of 1 toe = 11.63 MWh, for comparison against renewable generation (also in MWh). The consumption-by-fuel chart displays all fuels in ktoe, DESNZ's native unit.",
   "note_industrial_consumption": "DESNZ's energy consumption dataset counts every unit of fuel burned within a local authority's boundary, including fuel used by large industrial sites (e.g. oil refining) to make products that are then consumed elsewhere \u2014 it measures fuel burned on-site, not fuel used by local residents and businesses. DESNZ's emissions statistics attribute CO2 by point-source location under separate rules, and don't necessarily scale with this consumption total in the same way. So a local authority with a large single industrial site (New Forest's oil refining is the clearest example in this dataset) can show a consumption total that looks disproportionately high next to its emissions total, without either figure being wrong \u2014 they're measuring different things. The consumption chart's \"by sector\" view (Domestic / Transport / Industrial, Commercial and other) exists to make this visible: a high \"Industrial, Commercial and other\" share relative to Domestic and Transport is the signal that a large non-household energy user, rather than local demand, is driving the area's total.",
-  "generated": "2026-08-30"
+  "generated": "2026-09-10"
  },
  "regions": {
   "hampshire-solent": {
@@ -3846,6 +3846,463 @@ window.MHE_ENERGY_DATA = {
       "Industrial, Commercial and other": 93.3208
      },
      "all_fuels_ktoe": 269.2055
+    }
+   }
+  },
+  "hampshire": {
+   "name": "Hampshire",
+   "generation": {
+    "2014": {
+     "total_mwh": 292271.817,
+     "by_technology_mwh": {
+      "Solar": 164794.244,
+      "Wind": 3369.115,
+      "Hydro": 37.891,
+      "Bioenergy & waste": 124070.567,
+      "Other": 0.001
+     }
+    },
+    "2015": {
+     "total_mwh": 490830.246,
+     "by_technology_mwh": {
+      "Solar": 261943.245,
+      "Wind": 2994.3,
+      "Hydro": 41.834,
+      "Bioenergy & waste": 225850.864,
+      "Other": 0.003
+     }
+    },
+    "2016": {
+     "total_mwh": 513149.759,
+     "by_technology_mwh": {
+      "Solar": 398289.538,
+      "Wind": 159.154,
+      "Hydro": 86.361,
+      "Bioenergy & waste": 114614.705,
+      "Other": 0.002
+     }
+    },
+    "2017": {
+     "total_mwh": 544942.516,
+     "by_technology_mwh": {
+      "Solar": 432566.375,
+      "Wind": 177.889,
+      "Hydro": 118.568,
+      "Bioenergy & waste": 112079.684,
+      "Other": 0.001
+     }
+    },
+    "2018": {
+     "total_mwh": 601580.694,
+     "by_technology_mwh": {
+      "Solar": 481798.885,
+      "Wind": 1953.406,
+      "Hydro": 125.598,
+      "Bioenergy & waste": 117702.805,
+      "Other": 0.001
+     }
+    },
+    "2019": {
+     "total_mwh": 545139.321,
+     "by_technology_mwh": {
+      "Solar": 476033.272,
+      "Wind": 47.831,
+      "Hydro": 135.116,
+      "Bioenergy & waste": 68923.103,
+      "Other": 0.0
+     }
+    },
+    "2020": {
+     "total_mwh": 556619.11,
+     "by_technology_mwh": {
+      "Solar": 488493.833,
+      "Wind": 56.647,
+      "Hydro": 147.128,
+      "Bioenergy & waste": 67921.504,
+      "Other": 0.0
+     }
+    },
+    "2021": {
+     "total_mwh": 521875.816,
+     "by_technology_mwh": {
+      "Solar": 452026.316,
+      "Wind": 43.177,
+      "Hydro": 118.791,
+      "Bioenergy & waste": 69687.534,
+      "Other": 0.0
+     }
+    },
+    "2022": {
+     "total_mwh": 568694.02,
+     "by_technology_mwh": {
+      "Solar": 502460.616,
+      "Wind": 33.11,
+      "Hydro": 85.245,
+      "Bioenergy & waste": 66115.049,
+      "Other": 0.0
+     }
+    },
+    "2023": {
+     "total_mwh": 575022.567,
+     "by_technology_mwh": {
+      "Solar": 502894.832,
+      "Wind": 35.623,
+      "Hydro": 111.35,
+      "Bioenergy & waste": 71980.762,
+      "Other": 0.0
+     }
+    },
+    "2024": {
+     "total_mwh": 585666.462,
+     "by_technology_mwh": {
+      "Solar": 516857.694,
+      "Wind": 34.66,
+      "Hydro": 134.296,
+      "Bioenergy & waste": 68639.812,
+      "Other": 0.0
+     }
+    }
+   },
+   "consumption": {
+    "2005": {
+     "electricity_consumption_mwh": 6300168.71,
+     "fuels_ktoe": {
+      "Coal": 22.0857,
+      "Manufactured fuels": 213.9673,
+      "Petroleum": 2568.0659,
+      "Gas": 1027.732,
+      "Electricity": 541.717,
+      "Bioenergy and wastes": 25.4029
+     },
+     "sector_ktoe": {
+      "Domestic": 1043.0068,
+      "Transport": 1139.7693,
+      "Industrial, Commercial and other": 2216.1947
+     },
+     "all_fuels_ktoe": 4398.9709
+    },
+    "2006": {
+     "electricity_consumption_mwh": 6209443.08,
+     "fuels_ktoe": {
+      "Coal": 20.2378,
+      "Manufactured fuels": 202.4194,
+      "Petroleum": 2431.7062,
+      "Gas": 963.157,
+      "Electricity": 533.916,
+      "Bioenergy and wastes": 32.4563
+     },
+     "sector_ktoe": {
+      "Domestic": 1034.2328,
+      "Transport": 1158.8484,
+      "Industrial, Commercial and other": 1990.8094
+     },
+     "all_fuels_ktoe": 4183.8906
+    },
+    "2007": {
+     "electricity_consumption_mwh": 6073814.02,
+     "fuels_ktoe": {
+      "Coal": 20.2713,
+      "Manufactured fuels": 211.8111,
+      "Petroleum": 2405.8716,
+      "Gas": 940.928,
+      "Electricity": 522.254,
+      "Bioenergy and wastes": 31.8138
+     },
+     "sector_ktoe": {
+      "Domestic": 1008.4489,
+      "Transport": 1169.9071,
+      "Industrial, Commercial and other": 1954.5927
+     },
+     "all_fuels_ktoe": 4132.9487
+    },
+    "2008": {
+     "electricity_consumption_mwh": 6088851.61,
+     "fuels_ktoe": {
+      "Coal": 22.5607,
+      "Manufactured fuels": 224.1368,
+      "Petroleum": 2173.4532,
+      "Gas": 894.362,
+      "Electricity": 523.547,
+      "Bioenergy and wastes": 43.7192
+     },
+     "sector_ktoe": {
+      "Domestic": 979.7903,
+      "Transport": 1154.5402,
+      "Industrial, Commercial and other": 1747.4494
+     },
+     "all_fuels_ktoe": 3881.7799
+    },
+    "2009": {
+     "electricity_consumption_mwh": 5978516.091,
+     "fuels_ktoe": {
+      "Coal": 24.1702,
+      "Manufactured fuels": 203.5006,
+      "Petroleum": 2314.7534,
+      "Gas": 813.7315,
+      "Electricity": 514.0599,
+      "Bioenergy and wastes": 47.3033
+     },
+     "sector_ktoe": {
+      "Domestic": 919.3626,
+      "Transport": 1128.8168,
+      "Industrial, Commercial and other": 1869.3404
+     },
+     "all_fuels_ktoe": 3917.5198
+    },
+    "2010": {
+     "electricity_consumption_mwh": 5958208.928,
+     "fuels_ktoe": {
+      "Coal": 27.4245,
+      "Manufactured fuels": 213.6107,
+      "Petroleum": 2272.1576,
+      "Gas": 810.3552,
+      "Electricity": 512.3138,
+      "Bioenergy and wastes": 55.4565
+     },
+     "sector_ktoe": {
+      "Domestic": 927.4578,
+      "Transport": 1119.0484,
+      "Industrial, Commercial and other": 1844.8121
+     },
+     "all_fuels_ktoe": 3891.3183
+    },
+    "2011": {
+     "electricity_consumption_mwh": 5825542.361,
+     "fuels_ktoe": {
+      "Coal": 27.151,
+      "Manufactured fuels": 315.4655,
+      "Petroleum": 2064.1897,
+      "Gas": 765.4849,
+      "Electricity": 500.9065,
+      "Bioenergy and wastes": 53.2152
+     },
+     "sector_ktoe": {
+      "Domestic": 877.6986,
+      "Transport": 1105.2018,
+      "Industrial, Commercial and other": 1743.5124
+     },
+     "all_fuels_ktoe": 3726.4128
+    },
+    "2012": {
+     "electricity_consumption_mwh": 5759468.904,
+     "fuels_ktoe": {
+      "Coal": 27.2413,
+      "Manufactured fuels": 261.5008,
+      "Petroleum": 2061.7012,
+      "Gas": 765.9403,
+      "Electricity": 495.2252,
+      "Bioenergy and wastes": 52.3535
+     },
+     "sector_ktoe": {
+      "Domestic": 881.3453,
+      "Transport": 1099.6346,
+      "Industrial, Commercial and other": 1682.9824
+     },
+     "all_fuels_ktoe": 3663.9622
+    },
+    "2013": {
+     "electricity_consumption_mwh": 5711686.542,
+     "fuels_ktoe": {
+      "Coal": 29.9987,
+      "Manufactured fuels": 230.8914,
+      "Petroleum": 2157.841,
+      "Gas": 754.5748,
+      "Electricity": 491.1166,
+      "Bioenergy and wastes": 57.4125
+     },
+     "sector_ktoe": {
+      "Domestic": 868.6602,
+      "Transport": 1097.2785,
+      "Industrial, Commercial and other": 1755.8963
+     },
+     "all_fuels_ktoe": 3721.835
+    },
+    "2014": {
+     "electricity_consumption_mwh": 5767403.915,
+     "fuels_ktoe": {
+      "Coal": 26.7762,
+      "Manufactured fuels": 222.8492,
+      "Petroleum": 2117.9565,
+      "Gas": 753.3377,
+      "Electricity": 495.9075,
+      "Bioenergy and wastes": 63.1209
+     },
+     "sector_ktoe": {
+      "Domestic": 862.9011,
+      "Transport": 1122.5449,
+      "Industrial, Commercial and other": 1694.5019
+     },
+     "all_fuels_ktoe": 3679.9479
+    },
+    "2015": {
+     "electricity_consumption_mwh": 5716956.329,
+     "fuels_ktoe": {
+      "Coal": 21.5642,
+      "Manufactured fuels": 214.6343,
+      "Petroleum": 2167.3912,
+      "Gas": 741.6173,
+      "Electricity": 491.5698,
+      "Bioenergy and wastes": 59.06
+     },
+     "sector_ktoe": {
+      "Domestic": 857.8278,
+      "Transport": 1145.7109,
+      "Industrial, Commercial and other": 1692.298
+     },
+     "all_fuels_ktoe": 3695.8368
+    },
+    "2016": {
+     "electricity_consumption_mwh": 5559574.89,
+     "fuels_ktoe": {
+      "Coal": 21.1354,
+      "Manufactured fuels": 209.1847,
+      "Petroleum": 2151.6268,
+      "Gas": 735.3911,
+      "Electricity": 478.0374,
+      "Bioenergy and wastes": 64.8822
+     },
+     "sector_ktoe": {
+      "Domestic": 858.4078,
+      "Transport": 1163.2051,
+      "Industrial, Commercial and other": 1638.6448
+     },
+     "all_fuels_ktoe": 3660.2577
+    },
+    "2017": {
+     "electricity_consumption_mwh": 5610139.404,
+     "fuels_ktoe": {
+      "Coal": 18.4551,
+      "Manufactured fuels": 208.1056,
+      "Petroleum": 2148.3603,
+      "Gas": 733.8589,
+      "Electricity": 482.3852,
+      "Bioenergy and wastes": 66.4977
+     },
+     "sector_ktoe": {
+      "Domestic": 865.068,
+      "Transport": 1169.1059,
+      "Industrial, Commercial and other": 1623.4889
+     },
+     "all_fuels_ktoe": 3657.6628
+    },
+    "2018": {
+     "electricity_consumption_mwh": 5586340.485,
+     "fuels_ktoe": {
+      "Coal": 16.8184,
+      "Manufactured fuels": 168.4689,
+      "Petroleum": 2147.9222,
+      "Gas": 772.391,
+      "Electricity": 480.3388,
+      "Bioenergy and wastes": 83.2541
+     },
+     "sector_ktoe": {
+      "Domestic": 868.3835,
+      "Transport": 1150.9235,
+      "Industrial, Commercial and other": 1649.8864
+     },
+     "all_fuels_ktoe": 3669.1935
+    },
+    "2019": {
+     "electricity_consumption_mwh": 5523991.028,
+     "fuels_ktoe": {
+      "Coal": 13.6174,
+      "Manufactured fuels": 223.8316,
+      "Petroleum": 2086.5671,
+      "Gas": 760.3385,
+      "Electricity": 474.9777,
+      "Bioenergy and wastes": 96.2281
+     },
+     "sector_ktoe": {
+      "Domestic": 875.0451,
+      "Transport": 1145.869,
+      "Industrial, Commercial and other": 1634.6464
+     },
+     "all_fuels_ktoe": 3655.5606
+    },
+    "2020": {
+     "electricity_consumption_mwh": 5344825.195,
+     "fuels_ktoe": {
+      "Coal": 12.7266,
+      "Manufactured fuels": 188.5866,
+      "Petroleum": 1717.2358,
+      "Gas": 777.3913,
+      "Electricity": 459.5722,
+      "Bioenergy and wastes": 94.6162
+     },
+     "sector_ktoe": {
+      "Domestic": 899.8735,
+      "Transport": 898.6246,
+      "Industrial, Commercial and other": 1451.6307
+     },
+     "all_fuels_ktoe": 3250.1288
+    },
+    "2021": {
+     "electricity_consumption_mwh": 5302484.726,
+     "fuels_ktoe": {
+      "Coal": 13.0752,
+      "Manufactured fuels": 186.3085,
+      "Petroleum": 1896.776,
+      "Gas": 744.9596,
+      "Electricity": 455.9316,
+      "Bioenergy and wastes": 94.1668
+     },
+     "sector_ktoe": {
+      "Domestic": 860.0056,
+      "Transport": 986.7052,
+      "Industrial, Commercial and other": 1544.5069
+     },
+     "all_fuels_ktoe": 3391.2177
+    },
+    "2022": {
+     "electricity_consumption_mwh": 5068233.063,
+     "fuels_ktoe": {
+      "Coal": 11.8537,
+      "Manufactured fuels": 198.2453,
+      "Petroleum": 2005.4007,
+      "Gas": 653.8601,
+      "Electricity": 435.7896,
+      "Bioenergy and wastes": 107.9329
+     },
+     "sector_ktoe": {
+      "Domestic": 766.6584,
+      "Transport": 1041.1097,
+      "Industrial, Commercial and other": 1605.3143
+     },
+     "all_fuels_ktoe": 3413.0824
+    },
+    "2023": {
+     "electricity_consumption_mwh": 5049081.635,
+     "fuels_ktoe": {
+      "Coal": 8.3763,
+      "Manufactured fuels": 192.3086,
+      "Petroleum": 1964.9779,
+      "Gas": 644.4435,
+      "Electricity": 434.1429,
+      "Bioenergy and wastes": 117.9807
+     },
+     "sector_ktoe": {
+      "Domestic": 779.8471,
+      "Transport": 1038.445,
+      "Industrial, Commercial and other": 1543.9379
+     },
+     "all_fuels_ktoe": 3362.23
+    },
+    "2024": {
+     "electricity_consumption_mwh": 5048908.783,
+     "fuels_ktoe": {
+      "Coal": 4.1296,
+      "Manufactured fuels": 175.313,
+      "Petroleum": 1994.9451,
+      "Gas": 641.977,
+      "Electricity": 434.128,
+      "Bioenergy and wastes": 117.6275
+     },
+     "sector_ktoe": {
+      "Domestic": 785.9216,
+      "Transport": 1027.1,
+      "Industrial, Commercial and other": 1555.0986
+     },
+     "all_fuels_ktoe": 3368.1202
     }
    }
   },

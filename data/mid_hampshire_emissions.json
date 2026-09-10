@@ -105,6 +105,12 @@
     "parent": "south-west-hampshire"
    },
    {
+    "key": "hampshire",
+    "name": "Hampshire",
+    "group": "county",
+    "parent": "hampshire-solent"
+   },
+   {
     "key": "winchester",
     "name": "Winchester",
     "group": "historic-district",
@@ -182,7 +188,7 @@
    "CH4": 84.0,
    "N2O": 264.0
   },
-  "generated": "2026-08-25"
+  "generated": "2026-09-10"
  },
  "areas_km2": {
   "Portsmouth": 60.1359,
@@ -6526,6 +6532,804 @@
        "CO2": 612.7609,
        "CH4": 103.9315,
        "N2O": 27.0779
+      }
+     }
+    }
+   }
+  },
+  "hampshire": {
+   "name": "Hampshire",
+   "las": [
+    "Basingstoke and Deane",
+    "East Hampshire",
+    "Eastleigh",
+    "Fareham",
+    "Gosport",
+    "Hart",
+    "Havant",
+    "New Forest",
+    "Rushmoor",
+    "Test Valley",
+    "Winchester"
+   ],
+   "years": {
+    "2005": {
+     "total_kt_co2e": 12401.1906,
+     "population_thousands": 1263.075,
+     "per_capita_t_co2e": 9.8183,
+     "sectors_kt_co2e": {
+      "Agriculture": 648.7824,
+      "Commercial": 1536.8519,
+      "Domestic": 3312.6898,
+      "Industry": 2488.4933,
+      "LULUCF": -295.3045,
+      "Public Sector": 465.6761,
+      "Transport": 3640.5118,
+      "Waste": 603.4898
+     },
+     "gases_kt_co2e": {
+      "CO2": 10792.6144,
+      "CH4": 1246.8304,
+      "N2O": 361.7458
+     },
+     "gwp20": {
+      "total_kt_co2e": 14893.4865,
+      "per_capita_t_co2e": 11.7915,
+      "sectors_kt_co2e": {
+       "Agriculture": 1161.6679,
+       "Commercial": 1627.899,
+       "Domestic": 3527.9042,
+       "Industry": 3026.7649,
+       "LULUCF": -280.6593,
+       "Public Sector": 492.8451,
+       "Transport": 3690.7197,
+       "Waste": 1646.345
+      },
+      "gases_kt_co2e": {
+       "CO2": 10792.6144,
+       "CH4": 3740.4911,
+       "N2O": 360.3807
+      }
+     }
+    },
+    "2006": {
+     "total_kt_co2e": 12090.0911,
+     "population_thousands": 1272.498,
+     "per_capita_t_co2e": 9.5011,
+     "sectors_kt_co2e": {
+      "Agriculture": 620.6834,
+      "Commercial": 1542.2278,
+      "Domestic": 3330.9271,
+      "Industry": 2260.2689,
+      "LULUCF": -305.6927,
+      "Public Sector": 431.849,
+      "Transport": 3613.471,
+      "Waste": 596.3566
+     },
+     "gases_kt_co2e": {
+      "CO2": 10547.9257,
+      "CH4": 1193.962,
+      "N2O": 348.2032
+     },
+     "gwp20": {
+      "total_kt_co2e": 14476.701,
+      "per_capita_t_co2e": 11.3766,
+      "sectors_kt_co2e": {
+       "Agriculture": 1107.0791,
+       "Commercial": 1624.9156,
+       "Domestic": 3536.2457,
+       "Industry": 2759.4867,
+       "LULUCF": -291.2248,
+       "Public Sector": 455.5448,
+       "Transport": 3660.0478,
+       "Waste": 1624.6061
+      },
+      "gases_kt_co2e": {
+       "CO2": 10547.9257,
+       "CH4": 3581.886,
+       "N2O": 346.8893
+      }
+     }
+    },
+    "2007": {
+     "total_kt_co2e": 12044.1804,
+     "population_thousands": 1283.441,
+     "per_capita_t_co2e": 9.3843,
+     "sectors_kt_co2e": {
+      "Agriculture": 627.7291,
+      "Commercial": 1502.2194,
+      "Domestic": 3190.0446,
+      "Industry": 2512.3524,
+      "LULUCF": -315.7093,
+      "Public Sector": 410.2664,
+      "Transport": 3626.6974,
+      "Waste": 490.5804
+     },
+     "gases_kt_co2e": {
+      "CO2": 10569.1239,
+      "CH4": 1136.1364,
+      "N2O": 338.9202
+     },
+     "gwp20": {
+      "total_kt_co2e": 14315.1743,
+      "per_capita_t_co2e": 11.1537,
+      "sectors_kt_co2e": {
+       "Agriculture": 1127.7469,
+       "Commercial": 1579.4976,
+       "Domestic": 3382.2497,
+       "Industry": 3104.6128,
+       "LULUCF": -301.0858,
+       "Public Sector": 432.0973,
+       "Transport": 3672.3827,
+       "Waste": 1317.6731
+      },
+      "gases_kt_co2e": {
+       "CO2": 10569.1239,
+       "CH4": 3408.4091,
+       "N2O": 337.6413
+      }
+     }
+    },
+    "2008": {
+     "total_kt_co2e": 11751.9636,
+     "population_thousands": 1293.565,
+     "per_capita_t_co2e": 9.0849,
+     "sectors_kt_co2e": {
+      "Agriculture": 643.7347,
+      "Commercial": 1514.4494,
+      "Domestic": 3226.4984,
+      "Industry": 2315.3243,
+      "LULUCF": -332.6573,
+      "Public Sector": 409.412,
+      "Transport": 3497.1952,
+      "Waste": 478.0069
+     },
+     "gases_kt_co2e": {
+      "CO2": 10357.8592,
+      "CH4": 1068.5066,
+      "N2O": 325.5978
+     },
+     "gwp20": {
+      "total_kt_co2e": 13887.7481,
+      "per_capita_t_co2e": 10.736,
+      "sectors_kt_co2e": {
+       "Agriculture": 1125.2905,
+       "Commercial": 1592.2776,
+       "Domestic": 3414.375,
+       "Industry": 2811.662,
+       "LULUCF": -318.2988,
+       "Public Sector": 430.8478,
+       "Transport": 3537.1177,
+       "Waste": 1294.4763
+      },
+      "gases_kt_co2e": {
+       "CO2": 10357.8592,
+       "CH4": 3205.5197,
+       "N2O": 324.3692
+      }
+     }
+    },
+    "2009": {
+     "total_kt_co2e": 10955.5647,
+     "population_thousands": 1301.706,
+     "per_capita_t_co2e": 8.4163,
+     "sectors_kt_co2e": {
+      "Agriculture": 619.5737,
+      "Commercial": 1338.2867,
+      "Domestic": 2943.2744,
+      "Industry": 2186.5803,
+      "LULUCF": -333.992,
+      "Public Sector": 362.4436,
+      "Transport": 3383.6644,
+      "Waste": 455.7336
+     },
+     "gases_kt_co2e": {
+      "CO2": 9575.7233,
+      "CH4": 1060.2857,
+      "N2O": 319.5559
+     },
+     "gwp20": {
+      "total_kt_co2e": 13074.9305,
+      "per_capita_t_co2e": 10.0445,
+      "sectors_kt_co2e": {
+       "Agriculture": 1082.6861,
+       "Commercial": 1413.8324,
+       "Domestic": 3126.2808,
+       "Industry": 2741.815,
+       "LULUCF": -319.9516,
+       "Public Sector": 383.0578,
+       "Transport": 3424.5584,
+       "Waste": 1222.6516
+      },
+      "gases_kt_co2e": {
+       "CO2": 9575.7233,
+       "CH4": 3180.8572,
+       "N2O": 318.3501
+      }
+     }
+    },
+    "2010": {
+     "total_kt_co2e": 10373.6493,
+     "population_thousands": 1312.347,
+     "per_capita_t_co2e": 7.9047,
+     "sectors_kt_co2e": {
+      "Agriculture": 615.9856,
+      "Commercial": 1372.9909,
+      "Domestic": 3152.8566,
+      "Industry": 1417.3989,
+      "LULUCF": -336.4539,
+      "Public Sector": 383.6175,
+      "Transport": 3356.0263,
+      "Waste": 411.2274
+     },
+     "gases_kt_co2e": {
+      "CO2": 9153.0665,
+      "CH4": 900.1915,
+      "N2O": 320.3914
+     },
+     "gwp20": {
+      "total_kt_co2e": 12172.8234,
+      "per_capita_t_co2e": 9.2756,
+      "sectors_kt_co2e": {
+       "Agriculture": 1072.0475,
+       "Commercial": 1445.4389,
+       "Domestic": 3341.7716,
+       "Industry": 1756.2502,
+       "LULUCF": -322.0151,
+       "Public Sector": 404.544,
+       "Transport": 3392.3455,
+       "Waste": 1082.4408
+      },
+      "gases_kt_co2e": {
+       "CO2": 9153.0665,
+       "CH4": 2700.5745,
+       "N2O": 319.1824
+      }
+     }
+    },
+    "2011": {
+     "total_kt_co2e": 9539.9114,
+     "population_thousands": 1322.118,
+     "per_capita_t_co2e": 7.2156,
+     "sectors_kt_co2e": {
+      "Agriculture": 590.2845,
+      "Commercial": 1253.6886,
+      "Domestic": 2783.61,
+      "Industry": 1192.763,
+      "LULUCF": -346.3642,
+      "Public Sector": 342.5748,
+      "Transport": 3298.8907,
+      "Waste": 424.464
+     },
+     "gases_kt_co2e": {
+      "CO2": 8336.0986,
+      "CH4": 875.0163,
+      "N2O": 328.7964
+     },
+     "gwp20": {
+      "total_kt_co2e": 11288.7032,
+      "per_capita_t_co2e": 8.5383,
+      "sectors_kt_co2e": {
+       "Agriculture": 1032.2678,
+       "Commercial": 1322.0671,
+       "Domestic": 2960.8132,
+       "Industry": 1495.0141,
+       "LULUCF": -331.8542,
+       "Public Sector": 362.1733,
+       "Transport": 3338.7453,
+       "Waste": 1109.4766
+      },
+      "gases_kt_co2e": {
+       "CO2": 8336.0986,
+       "CH4": 2625.049,
+       "N2O": 327.5557
+      }
+     }
+    },
+    "2012": {
+     "total_kt_co2e": 9848.9064,
+     "population_thousands": 1331.572,
+     "per_capita_t_co2e": 7.3965,
+     "sectors_kt_co2e": {
+      "Agriculture": 608.1992,
+      "Commercial": 1322.5214,
+      "Domestic": 2992.6321,
+      "Industry": 1217.2433,
+      "LULUCF": -333.4893,
+      "Public Sector": 362.7326,
+      "Transport": 3259.9402,
+      "Waste": 419.1269
+     },
+     "gases_kt_co2e": {
+      "CO2": 8647.3654,
+      "CH4": 864.9597,
+      "N2O": 336.5814
+     },
+     "gwp20": {
+      "total_kt_co2e": 11577.5557,
+      "per_capita_t_co2e": 8.6947,
+      "sectors_kt_co2e": {
+       "Agriculture": 1044.2344,
+       "Commercial": 1386.695,
+       "Domestic": 3180.1613,
+       "Industry": 1524.2999,
+       "LULUCF": -319.0956,
+       "Public Sector": 382.9426,
+       "Transport": 3294.0685,
+       "Waste": 1084.2496
+      },
+      "gases_kt_co2e": {
+       "CO2": 8647.3654,
+       "CH4": 2594.879,
+       "N2O": 335.3113
+      }
+     }
+    },
+    "2013": {
+     "total_kt_co2e": 9578.2369,
+     "population_thousands": 1339.946,
+     "per_capita_t_co2e": 7.1482,
+     "sectors_kt_co2e": {
+      "Agriculture": 597.7703,
+      "Commercial": 1236.0211,
+      "Domestic": 2913.345,
+      "Industry": 1204.7359,
+      "LULUCF": -352.5015,
+      "Public Sector": 353.7455,
+      "Transport": 3221.2288,
+      "Waste": 403.8918
+     },
+     "gases_kt_co2e": {
+      "CO2": 8415.7935,
+      "CH4": 833.477,
+      "N2O": 328.9665
+     },
+     "gwp20": {
+      "total_kt_co2e": 11243.9496,
+      "per_capita_t_co2e": 8.3913,
+      "sectors_kt_co2e": {
+       "Agriculture": 1023.8253,
+       "Commercial": 1287.3053,
+       "Domestic": 3080.1809,
+       "Industry": 1509.4658,
+       "LULUCF": -338.6338,
+       "Public Sector": 371.5647,
+       "Transport": 3254.2513,
+       "Waste": 1055.9901
+      },
+      "gases_kt_co2e": {
+       "CO2": 8415.7935,
+       "CH4": 2500.4309,
+       "N2O": 327.7251
+      }
+     }
+    },
+    "2014": {
+     "total_kt_co2e": 8611.5606,
+     "population_thousands": 1349.948,
+     "per_capita_t_co2e": 6.3792,
+     "sectors_kt_co2e": {
+      "Agriculture": 563.576,
+      "Commercial": 1074.4366,
+      "Domestic": 2497.6037,
+      "Industry": 848.7813,
+      "LULUCF": -350.5159,
+      "Public Sector": 306.0845,
+      "Transport": 3290.8308,
+      "Waste": 380.7636
+     },
+     "gases_kt_co2e": {
+      "CO2": 7613.8789,
+      "CH4": 671.4108,
+      "N2O": 326.2709
+     },
+     "gwp20": {
+      "total_kt_co2e": 9953.151,
+      "per_capita_t_co2e": 7.373,
+      "sectors_kt_co2e": {
+       "Agriculture": 991.5857,
+       "Commercial": 1125.914,
+       "Domestic": 2654.5431,
+       "Industry": 888.7218,
+       "LULUCF": -336.2288,
+       "Public Sector": 323.0805,
+       "Transport": 3323.0469,
+       "Waste": 982.4878
+      },
+      "gases_kt_co2e": {
+       "CO2": 7613.8789,
+       "CH4": 2014.2323,
+       "N2O": 325.0397
+      }
+     }
+    },
+    "2015": {
+     "total_kt_co2e": 8300.5414,
+     "population_thousands": 1358.341,
+     "per_capita_t_co2e": 6.1108,
+     "sectors_kt_co2e": {
+      "Agriculture": 585.153,
+      "Commercial": 936.4734,
+      "Domestic": 2395.7595,
+      "Industry": 741.8447,
+      "LULUCF": -365.1929,
+      "Public Sector": 274.5497,
+      "Transport": 3329.7566,
+      "Waste": 402.1974
+     },
+     "gases_kt_co2e": {
+      "CO2": 7299.473,
+      "CH4": 675.7008,
+      "N2O": 325.3676
+     },
+     "gwp20": {
+      "total_kt_co2e": 9650.715,
+      "per_capita_t_co2e": 7.1048,
+      "sectors_kt_co2e": {
+       "Agriculture": 998.7053,
+       "Commercial": 983.8377,
+       "Domestic": 2549.6357,
+       "Industry": 772.0226,
+       "LULUCF": -351.2941,
+       "Public Sector": 290.061,
+       "Transport": 3361.2912,
+       "Waste": 1046.4556
+      },
+      "gases_kt_co2e": {
+       "CO2": 7299.473,
+       "CH4": 2027.1023,
+       "N2O": 324.1398
+      }
+     }
+    },
+    "2016": {
+     "total_kt_co2e": 7994.6323,
+     "population_thousands": 1368.397,
+     "per_capita_t_co2e": 5.8423,
+     "sectors_kt_co2e": {
+      "Agriculture": 560.5124,
+      "Commercial": 776.7921,
+      "Domestic": 2277.5821,
+      "Industry": 686.0261,
+      "LULUCF": -348.4521,
+      "Public Sector": 227.689,
+      "Transport": 3434.7321,
+      "Waste": 379.7506
+     },
+     "gases_kt_co2e": {
+      "CO2": 7044.2459,
+      "CH4": 631.8583,
+      "N2O": 318.5281
+     },
+     "gwp20": {
+      "total_kt_co2e": 9257.147,
+      "per_capita_t_co2e": 6.765,
+      "sectors_kt_co2e": {
+       "Agriculture": 959.5566,
+       "Commercial": 816.4385,
+       "Domestic": 2417.2383,
+       "Industry": 713.5157,
+       "LULUCF": -333.7979,
+       "Public Sector": 239.7944,
+       "Transport": 3466.5511,
+       "Waste": 977.8503
+      },
+      "gases_kt_co2e": {
+       "CO2": 7044.2459,
+       "CH4": 1895.575,
+       "N2O": 317.3261
+      }
+     }
+    },
+    "2017": {
+     "total_kt_co2e": 7748.8545,
+     "population_thousands": 1373.783,
+     "per_capita_t_co2e": 5.6405,
+     "sectors_kt_co2e": {
+      "Agriculture": 567.5791,
+      "Commercial": 625.3007,
+      "Domestic": 2141.1993,
+      "Industry": 689.2866,
+      "LULUCF": -362.4668,
+      "Public Sector": 231.2482,
+      "Transport": 3456.9705,
+      "Waste": 399.7369
+     },
+     "gases_kt_co2e": {
+      "CO2": 6779.8076,
+      "CH4": 641.7692,
+      "N2O": 327.2777
+     },
+     "gwp20": {
+      "total_kt_co2e": 9031.158,
+      "per_capita_t_co2e": 6.5739,
+      "sectors_kt_co2e": {
+       "Agriculture": 964.8895,
+       "Commercial": 659.0788,
+       "Domestic": 2271.6041,
+       "Industry": 716.8264,
+       "LULUCF": -348.6463,
+       "Public Sector": 243.7497,
+       "Transport": 3491.491,
+       "Waste": 1032.1648
+      },
+      "gases_kt_co2e": {
+       "CO2": 6779.8076,
+       "CH4": 1925.3077,
+       "N2O": 326.0427
+      }
+     }
+    },
+    "2018": {
+     "total_kt_co2e": 7644.8453,
+     "population_thousands": 1378.177,
+     "per_capita_t_co2e": 5.5471,
+     "sectors_kt_co2e": {
+      "Agriculture": 520.3442,
+      "Commercial": 755.0311,
+      "Domestic": 2105.5354,
+      "Industry": 644.9345,
+      "LULUCF": -360.053,
+      "Public Sector": 212.5973,
+      "Transport": 3379.1015,
+      "Waste": 387.3543
+     },
+     "gases_kt_co2e": {
+      "CO2": 6691.3774,
+      "CH4": 632.4446,
+      "N2O": 321.0232
+     },
+     "gwp20": {
+      "total_kt_co2e": 8908.5231,
+      "per_capita_t_co2e": 6.464,
+      "sectors_kt_co2e": {
+       "Agriculture": 917.8076,
+       "Commercial": 795.2979,
+       "Domestic": 2235.6593,
+       "Industry": 671.3571,
+       "LULUCF": -345.8929,
+       "Public Sector": 223.4784,
+       "Transport": 3416.047,
+       "Waste": 994.7687
+      },
+      "gases_kt_co2e": {
+       "CO2": 6691.3774,
+       "CH4": 1897.3338,
+       "N2O": 319.8118
+      }
+     }
+    },
+    "2019": {
+     "total_kt_co2e": 7180.8418,
+     "population_thousands": 1384.378,
+     "per_capita_t_co2e": 5.1871,
+     "sectors_kt_co2e": {
+      "Agriculture": 532.0027,
+      "Commercial": 646.6666,
+      "Domestic": 2009.7876,
+      "Industry": 613.2506,
+      "LULUCF": -364.0669,
+      "Public Sector": 184.1333,
+      "Transport": 3269.2388,
+      "Waste": 289.8291
+     },
+     "gases_kt_co2e": {
+      "CO2": 6323.397,
+      "CH4": 524.6742,
+      "N2O": 332.7705
+     },
+     "gwp20": {
+      "total_kt_co2e": 8228.9342,
+      "per_capita_t_co2e": 5.9441,
+      "sectors_kt_co2e": {
+       "Agriculture": 920.2893,
+       "Commercial": 684.6673,
+       "Domestic": 2139.5113,
+       "Industry": 638.7323,
+       "LULUCF": -350.1656,
+       "Public Sector": 194.0951,
+       "Transport": 3302.8941,
+       "Waste": 698.9104
+      },
+      "gases_kt_co2e": {
+       "CO2": 6323.397,
+       "CH4": 1574.0225,
+       "N2O": 331.5148
+      }
+     }
+    },
+    "2020": {
+     "total_kt_co2e": 6393.2665,
+     "population_thousands": 1391.311,
+     "per_capita_t_co2e": 4.5951,
+     "sectors_kt_co2e": {
+      "Agriculture": 507.6941,
+      "Commercial": 569.7337,
+      "Domestic": 1994.3224,
+      "Industry": 559.9739,
+      "LULUCF": -369.6099,
+      "Public Sector": 177.2279,
+      "Transport": 2686.5493,
+      "Waste": 267.3751
+     },
+     "gases_kt_co2e": {
+      "CO2": 5600.3235,
+      "CH4": 482.6623,
+      "N2O": 310.2806
+     },
+     "gwp20": {
+      "total_kt_co2e": 7357.4202,
+      "per_capita_t_co2e": 5.2881,
+      "sectors_kt_co2e": {
+       "Agriculture": 876.7494,
+       "Commercial": 602.5813,
+       "Domestic": 2121.5802,
+       "Industry": 582.0335,
+       "LULUCF": -356.4196,
+       "Public Sector": 186.4704,
+       "Transport": 2713.5452,
+       "Waste": 630.8798
+      },
+      "gases_kt_co2e": {
+       "CO2": 5600.3235,
+       "CH4": 1447.9869,
+       "N2O": 309.1098
+      }
+     }
+    },
+    "2021": {
+     "total_kt_co2e": 6715.4904,
+     "population_thousands": 1406.11,
+     "per_capita_t_co2e": 4.7759,
+     "sectors_kt_co2e": {
+      "Agriculture": 508.6705,
+      "Commercial": 649.209,
+      "Domestic": 2017.6799,
+      "Industry": 585.786,
+      "LULUCF": -354.6436,
+      "Public Sector": 193.0508,
+      "Transport": 2841.4412,
+      "Waste": 274.2966
+     },
+     "gases_kt_co2e": {
+      "CO2": 5917.5857,
+      "CH4": 480.0913,
+      "N2O": 317.8133
+     },
+     "gwp20": {
+      "total_kt_co2e": 7674.4737,
+      "per_capita_t_co2e": 5.4579,
+      "sectors_kt_co2e": {
+       "Agriculture": 871.9205,
+       "Commercial": 684.0706,
+       "Domestic": 2138.1499,
+       "Industry": 606.8356,
+       "LULUCF": -340.682,
+       "Public Sector": 202.3814,
+       "Transport": 2864.55,
+       "Waste": 647.2477
+      },
+      "gases_kt_co2e": {
+       "CO2": 5917.5857,
+       "CH4": 1440.274,
+       "N2O": 316.614
+      }
+     }
+    },
+    "2022": {
+     "total_kt_co2e": 6257.7287,
+     "population_thousands": 1417.953,
+     "per_capita_t_co2e": 4.4132,
+     "sectors_kt_co2e": {
+      "Agriculture": 462.4507,
+      "Commercial": 631.9729,
+      "Domestic": 1733.8054,
+      "Industry": 470.0291,
+      "LULUCF": -342.678,
+      "Public Sector": 172.1217,
+      "Transport": 2853.2385,
+      "Waste": 276.7884
+     },
+     "gases_kt_co2e": {
+      "CO2": 5491.2182,
+      "CH4": 464.2952,
+      "N2O": 302.2153
+     },
+     "gwp20": {
+      "total_kt_co2e": 7185.1787,
+      "per_capita_t_co2e": 5.0673,
+      "sectors_kt_co2e": {
+       "Agriculture": 811.4802,
+       "Commercial": 666.2074,
+       "Domestic": 1843.1017,
+       "Industry": 487.256,
+       "LULUCF": -328.2647,
+       "Public Sector": 180.7785,
+       "Transport": 2873.4865,
+       "Waste": 651.1331
+      },
+      "gases_kt_co2e": {
+       "CO2": 5491.2182,
+       "CH4": 1392.8856,
+       "N2O": 301.0749
+      }
+     }
+    },
+    "2023": {
+     "total_kt_co2e": 5985.9339,
+     "population_thousands": 1433.542,
+     "per_capita_t_co2e": 4.1756,
+     "sectors_kt_co2e": {
+      "Agriculture": 468.8067,
+      "Commercial": 547.0472,
+      "Domestic": 1612.9663,
+      "Industry": 426.5982,
+      "LULUCF": -359.3292,
+      "Public Sector": 153.0661,
+      "Transport": 2827.2022,
+      "Waste": 309.5764
+     },
+     "gases_kt_co2e": {
+      "CO2": 5210.4769,
+      "CH4": 476.5567,
+      "N2O": 298.9004
+     },
+     "gwp20": {
+      "total_kt_co2e": 6937.9192,
+      "per_capita_t_co2e": 4.8397,
+      "sectors_kt_co2e": {
+       "Agriculture": 797.5807,
+       "Commercial": 577.3411,
+       "Domestic": 1713.834,
+       "Industry": 442.2672,
+       "LULUCF": -346.0357,
+       "Public Sector": 160.8043,
+       "Transport": 2847.1024,
+       "Waste": 745.0252
+      },
+      "gases_kt_co2e": {
+       "CO2": 5210.4769,
+       "CH4": 1429.67,
+       "N2O": 297.7725
+      }
+     }
+    },
+    "2024": {
+     "total_kt_co2e": 5898.693,
+     "population_thousands": 1447.214,
+     "per_capita_t_co2e": 4.0759,
+     "sectors_kt_co2e": {
+      "Agriculture": 471.2735,
+      "Commercial": 489.8637,
+      "Domestic": 1639.1295,
+      "Industry": 391.3823,
+      "LULUCF": -354.2724,
+      "Public Sector": 149.1805,
+      "Transport": 2825.3072,
+      "Waste": 286.8287
+     },
+     "gases_kt_co2e": {
+      "CO2": 5153.9026,
+      "CH4": 449.4698,
+      "N2O": 295.3207
+     },
+     "gwp20": {
+      "total_kt_co2e": 6796.5183,
+      "per_capita_t_co2e": 4.6963,
+      "sectors_kt_co2e": {
+       "Agriculture": 792.9508,
+       "Commercial": 518.8793,
+       "Domestic": 1741.3575,
+       "Industry": 409.1581,
+       "LULUCF": -340.9981,
+       "Public Sector": 156.7616,
+       "Transport": 2844.7629,
+       "Waste": 673.6462
+      },
+      "gases_kt_co2e": {
+       "CO2": 5153.9026,
+       "CH4": 1348.4095,
+       "N2O": 294.2063
       }
      }
     }
@@ -15599,6 +16403,56 @@
     "Waste 'Other'": 29.9324
    }
   },
+  "hampshire": {
+   "Agriculture": {
+    "Agriculture Electricity": 10.6366,
+    "Agriculture Gas": 4.3159,
+    "Agriculture Livestock": 183.237,
+    "Agriculture 'Other'": 125.8006,
+    "Agriculture Soils": 147.2834
+   },
+   "Commercial": {
+    "Commercial Electricity": 281.3784,
+    "Commercial Gas": 156.9119,
+    "Commercial 'Other'": 51.5734
+   },
+   "Domestic": {
+    "Domestic Electricity": 341.8408,
+    "Domestic Gas": 1101.4799,
+    "Domestic 'Other'": 195.8088
+   },
+   "Industry": {
+    "Industry Electricity": 97.5217,
+    "Industry Gas": 56.6084,
+    "Industry 'Other'": 180.8757,
+    "Large Industrial Installations": 56.3766
+   },
+   "LULUCF": {
+    "Net Emissions: Bioenergy crops": 0.0345,
+    "Net Emissions: Cropland mineral soils change": 85.4612,
+    "Net Emissions: Forestry": -441.3332,
+    "Net Emissions: Grassland mineral soils change": -99.4045,
+    "Net Emissions: Other LULUCF": 2.8919,
+    "Net Emissions: Peatland": 51.3954,
+    "Net Emissions: Settlements": 46.6823
+   },
+   "Public Sector": {
+    "Public Sector Electricity": 41.8108,
+    "Public Sector Gas": 82.8428,
+    "Public Sector 'Other'": 24.5269
+   },
+   "Transport": {
+    "Diesel Railways": 33.0426,
+    "Road Transport (A roads)": 995.1684,
+    "Road Transport (Minor roads)": 1012.5245,
+    "Road Transport (Motorways)": 736.3848,
+    "Transport 'Other'": 48.1869
+   },
+   "Waste": {
+    "Landfill": 94.8074,
+    "Waste 'Other'": 192.0213
+   }
+  },
   "winchester": {
    "Agriculture": {
     "Agriculture Electricity": 1.595,
@@ -16537,6 +17391,56 @@
     "Waste": {
      "Landfill": 30.9681,
      "Waste 'Other'": 53.3113
+    }
+   },
+   "hampshire": {
+    "Agriculture": {
+     "Agriculture Electricity": 11.3418,
+     "Agriculture Gas": 4.5082,
+     "Agriculture Livestock": 502.8453,
+     "Agriculture 'Other'": 127.4565,
+     "Agriculture Soils": 146.7991
+    },
+    "Commercial": {
+     "Commercial Electricity": 300.0369,
+     "Commercial Gas": 163.9017,
+     "Commercial 'Other'": 54.9406
+    },
+    "Domestic": {
+     "Domestic Electricity": 364.5087,
+     "Domestic Gas": 1150.5468,
+     "Domestic 'Other'": 226.302
+    },
+    "Industry": {
+     "Industry Electricity": 103.9884,
+     "Industry Gas": 59.13,
+     "Industry 'Other'": 188.508,
+     "Large Industrial Installations": 57.5316
+    },
+    "LULUCF": {
+     "Net Emissions: Bioenergy crops": 0.0345,
+     "Net Emissions: Cropland mineral soils change": 85.4454,
+     "Net Emissions: Forestry": -441.1339,
+     "Net Emissions: Grassland mineral soils change": -99.4046,
+     "Net Emissions: Other LULUCF": 2.9136,
+     "Net Emissions: Peatland": 64.4794,
+     "Net Emissions: Settlements": 46.6675
+    },
+    "Public Sector": {
+     "Public Sector Electricity": 44.5834,
+     "Public Sector Gas": 86.5331,
+     "Public Sector 'Other'": 25.6451
+    },
+    "Transport": {
+     "Diesel Railways": 33.2337,
+     "Road Transport (A roads)": 1001.4638,
+     "Road Transport (Minor roads)": 1019.7041,
+     "Road Transport (Motorways)": 740.8825,
+     "Transport 'Other'": 49.4788
+    },
+    "Waste": {
+     "Landfill": 284.4222,
+     "Waste 'Other'": 389.224
     }
    },
    "winchester": {

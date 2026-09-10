@@ -55,10 +55,10 @@
   let trendScaleNoteText = "";
 
   // Every region this site can show — built from DATA.meta.region_index (see region_index in
-  // process.py) once data loads, rather than hardcoded here, since there are 19 of them across
-  // three tiers (historic districts / current unitaries / proposed 2028 unitaries) plus
-  // Hampshire and the Solent itself. Populated by initRegions() in init(). `group` and `parent`
-  // drive the dropdown grouping and the context-chart hierarchy helpers just below.
+  // process.py) once data loads, rather than hardcoded here, since there are 20 of them across
+  // four tiers (historic districts / current unitaries / Hampshire, the county / proposed 2028
+  // unitaries) plus Hampshire and the Solent itself. Populated by initRegions() in init(). `group`
+  // and `parent` drive the dropdown grouping and the context-chart hierarchy helpers just below.
   let REGIONS = [];
   let REGION_LABEL = {};
   let REGION_BY_KEY = {};
@@ -99,8 +99,16 @@
     return chain;
   }
 
+  // Excludes "county" (Hampshire) even though its `parent` is hampshire-solent: unlike the
+  // proposed unitaries + Isle of Wight, which are a clean, non-overlapping partition of Hampshire
+  // and the Solent, Hampshire's total overlaps ~80% with North/Mid/South-East/South-West Hampshire
+  // (it's the same 11 districts split a different way). Listing it as a sixth "sibling" there would
+  // both mislead (it isn't a distinct partition member) and, being far larger than any one proposed
+  // unitary, compress their bars in the very comparison that matters most for LGR. It still climbs
+  // the ancestor chain via regionParent/regionAncestors for its own "compare in context" view
+  // (Hampshire vs. Hampshire and the Solent) — only this constituents-listing direction is blocked.
   function regionChildren(key) {
-    return REGIONS.filter(r => r.parent === key).map(r => r.key);
+    return REGIONS.filter(r => r.parent === key && r.group !== "county").map(r => r.key);
   }
 
   // The nearest region (self or an ancestor) that has constituents to show — used by the
@@ -167,9 +175,14 @@
   const REGION_GROUP_LABEL = {
     "historic-district": "Historic districts",
     "current-unitary": "Current unitaries",
+    "county": "Hampshire (county)",
     "proposed-unitary": "Proposed unitaries (2028)"
   };
-  const REGION_GROUP_ORDER = ["historic-district", "current-unitary", "proposed-unitary"];
+  // "county" (Hampshire) sits directly after "current-unitary" so it reads as grouped with
+  // Portsmouth/Southampton/Isle of Wight in the list, even though it's a separate fixed-scale tier
+  // (see REGION_DEFS in la_config.py) and excluded from their "compare all constituents" set (see
+  // regionChildren above) — this ordering is purely cosmetic, decoupled from both of those.
+  const REGION_GROUP_ORDER = ["historic-district", "current-unitary", "county", "proposed-unitary"];
 
   // Builds the #region-select's <option>/<optgroup> markup from REGIONS — nothing hardcoded in
   // index.html, so the dropdown always matches whatever region_index the data actually contains.
@@ -280,7 +293,7 @@
   // can't get the same guarantee, since which categories end up adjacent depends on that year's
   // data — this was already true before this mapping existed (colour was previously pinned by
   // array position, not identity, but the sort-driven adjacency risk is unchanged either way).
-  // Regions aren't in CATEGORY_COLOR_SLOT below: with 19 of them and only 8 slots, no fixed
+  // Regions aren't in CATEGORY_COLOR_SLOT below: with 20 of them and only 8 slots, no fixed
   // per-region identity colour is possible (or useful — at most ~5 regions are ever on screen
   // together). See contextRegionColor() near the trend chart for how region colour is assigned
   // instead: by role (selected region / its parent / Hampshire and the Solent) in "context" mode,
@@ -840,7 +853,7 @@
   // every year, so its line doesn't rescale as you scrub through years within one view. The two
   // views' axes are deliberately allowed to differ from each other now (a bar chart and a line
   // chart aren't being compared side by side, so there's no need for them to share one scale) —
-  // see the "Fixed vs auto scale" info dialog. Cheap enough (19 regions x up to ~20 years x a
+  // see the "Fixed vs auto scale" info dialog. Cheap enough (20 regions x up to ~20 years x a
   // handful of categories) to recompute on demand rather than precompute at load, so it's just
   // memoized per distinct (tier, metric, onlyYear, ...) combination actually asked for.
   const generationTierMaxCache = {};
@@ -1040,10 +1053,10 @@
   // The trend chart isn't tier-scoped like the charts above — a "context" view can show a
   // district alongside its own unitary and Hampshire and the Solent on one chart, spanning three
   // tiers at once, so "one shared scale per tier" has no single tier to anchor to. Its "fixed"
-  // scale is instead one true maximum across every one of the 19 regions (for whichever years
+  // scale is instead one true maximum across every one of the 20 regions (for whichever years
   // onlyYear selects — see generationTierMax above for why the latest and historical views use
   // different scopes), which is what fixes the original reported bug: without scanning across all
-  // 19 regions, switching the selected region (e.g. New Forest to Winchester) changed the axis to
+  // 20 regions, switching the selected region (e.g. New Forest to Winchester) changed the axis to
   // fit whichever 2-3 regions happened to be on screen, so Hampshire and the Solent's bar/line —
   // present in *every* context view, at the same real value each time — visibly changed size
   // purely because the denominator moved, even though nothing about Hampshire and the Solent
@@ -1140,7 +1153,7 @@
   // constituent unitaries, the largest sibling group in the hierarchy).
   const CONSTITUENT_SLOT_ORDER = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  // Colour by role, not by fixed per-region identity — with 19 regions and 8 slots, identity
+  // Colour by role, not by fixed per-region identity — with 20 regions and 8 slots, identity
   // colour isn't possible, and isn't needed since at most ~5 regions render together. In
   // "context" mode: the selected region is always blue (slot 1, "you are here"), an intermediate
   // parent (if shown) is always green (slot 6), Hampshire and the Solent is always violet
@@ -2458,7 +2471,7 @@
     "scale-mode-toggle": {
       title: "Fixed vs auto scale",
       body: [
-        "Every chart on this site defaults to \"Fixed scale\": one shared axis maximum for every region being compared, rather than each chart resizing itself to whichever region happens to be selected. For the sector, gas, generation and consumption charts, total figures share one scale per tier (historic districts share one scale, current unitaries another, proposed unitaries another — Hampshire and the Solent has no tier-mates, so it's unaffected either way), since tiers differ hugely in population and area; per-person figures instead share one scale across all 19 regions, since per-person values divide out exactly the population difference tiers exist to separate — a district's and a unitary's per-person figures are directly comparable. The trend chart always uses one scale across all 19 regions, on either metric, since a single trend chart can show more than one tier together (a district alongside its own unitary and Hampshire and the Solent). Switching the region selector no longer rescales the axis, so a real difference in volume stays visible as a difference in bar height or line position, not just a number you'd otherwise have to read closely to notice.",
+        "Every chart on this site defaults to \"Fixed scale\": one shared axis maximum for every region being compared, rather than each chart resizing itself to whichever region happens to be selected. For the sector, gas, generation and consumption charts, total figures share one scale per tier (historic districts share one scale, current unitaries another, proposed unitaries another — Hampshire and the Solent has no tier-mates, so it's unaffected either way), since tiers differ hugely in population and area; per-person figures instead share one scale across all 20 regions, since per-person values divide out exactly the population difference tiers exist to separate — a district's and a unitary's per-person figures are directly comparable. The trend chart always uses one scale across all 20 regions, on either metric, since a single trend chart can show more than one tier together (a district alongside its own unitary and Hampshire and the Solent). Switching the region selector no longer rescales the axis, so a real difference in volume stays visible as a difference in bar height or line position, not just a number you'd otherwise have to read closely to notice.",
         "The trade-off: a small area's bar can end up short on a shared scale, which can make its own internal split (which sector, which technology, which fuel) harder to read at a glance. \"Auto scale\" switches back to sizing each chart to its own region's figures, trading that comparability away for a clearer read of one area on its own — useful if you want to see a smaller area's own composition rather than compare it against a much larger neighbour.",
         "The \"Latest year\" and \"Historical trend\" views intentionally use different fixed maxima, rather than sharing one: \"Latest year\" scales to the highest value seen across the comparison set in that one latest year, so a genuine decline since earlier years (UK-wide territorial emissions have fallen substantially since 2005, for example) doesn't leave every current bar looking artificially small against a much higher historical peak. \"Historical trend\" scales to the highest value across the comparison set's *entire* published history, so its line doesn't rescale as you scan across years within that one view. A bar chart and a line chart aren't being compared side by side, so there's no need for the two views to share one number — expect the axis to change when you switch between them; that's by design, not a bug.",
         "The sector, gas and trend charts' fixed scale also spans both the 100-year and 20-year GWP time horizons at once, rather than each getting its own maximum: unlike region tier, a horizon switch doesn't come from a population difference, but sharing one range means flipping that toggle for a single region doesn't rescale the axis either, so a genuine change in the picture (methane-heavy sectors growing under the 20-year weighting) stays visible as a change in bar or line size rather than a moving axis. If that leaves the 100-year view looking compressed, switch to auto scale.",
@@ -2639,7 +2652,7 @@
   }
 
   // Reflects the current region in the URL as a "?region=" param, so a link can point straight
-  // at any of the 19 regions — the point of promoting this site across every district and
+  // at any of the 20 regions — the point of promoting this site across every district and
   // unitary rather than just Winchester's original three geographies. Uses replaceState, not
   // pushState: switching regions is exploratory, like the other page controls, not something
   // that should give every click its own back-button stop. "winchester" (the default) is kept

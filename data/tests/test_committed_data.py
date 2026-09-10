@@ -56,7 +56,7 @@ class TestEmissionsShape(unittest.TestCase):
                 self.assertIn(r["parent"], REGION_KEYS, f"{r['key']}'s parent {r['parent']} doesn't exist")
 
     def test_group_values_known(self):
-        allowed = {"aggregate", "proposed-unitary", "current-unitary", "historic-district"}
+        allowed = {"aggregate", "proposed-unitary", "current-unitary", "county", "historic-district"}
         for r in REGION_INDEX:
             self.assertIn(r["group"], allowed)
 
