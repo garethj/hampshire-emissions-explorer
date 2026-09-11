@@ -700,18 +700,19 @@ test("each fixed-scale chart's info dialog states which control combination curr
   fireClick(window, doc.querySelector('[data-view="historical"]'));
   fireClick(window, doc.querySelector('[data-metric="per_capita"]'));
 
-  // The setter sentence is rendered as a .modal-note aside at the *end* of the dialog, not as
-  // its opening paragraph — a general reader's first sentence should say what the chart shows,
-  // not why its axis is a particular height. Selecting by class rather than position keeps this
-  // test pinned to that intent rather than to the paragraph order.
+  // The setter sentence is the final row of the collapsed method block, not the dialog's opening
+  // paragraph: a general reader's first sentence should say what the chart shows, not why its
+  // axis is a particular height. Selecting the row by its data-row hook, and asserting where it
+  // sits, pins this test to that intent rather than to paragraph order.
   function infoIntro(key) {
     fireClick(window, doc.querySelector(`[data-info="${key}"]`));
-    const note = doc.querySelector("#modal-body p.modal-note");
-    assert.ok(note, `no .modal-note setter sentence in the "${key}" dialog`);
-    const text = note.textContent;
-    const first = doc.querySelector("#modal-body p").textContent;
-    assert.notEqual(first, text,
-      `the "${key}" dialog opens with its axis-setter note; that belongs last, not first`);
+    const row = doc.querySelector('#modal-body dd[data-row="axis"]');
+    assert.ok(row, `no axis-setter row in the "${key}" dialog`);
+    assert.ok(row.closest("details.method-block"),
+      `the "${key}" dialog's axis-setter row should sit inside the method disclosure, not above it`);
+    assert.ok(doc.querySelector("#modal-body p.modal-summary"),
+      `the "${key}" dialog should open with a plain-language summary`);
+    const text = row.textContent;
     doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
     return text;
   }
@@ -972,4 +973,91 @@ test("no info dialog leaves an unrendered [[key|label]] marker, or points at a m
     });
     doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
   });
+});
+
+test("every info dialog follows the same three-part shape, and leads with its summary", async () => {
+  // The whole point of the schema is that a reader learns the dialog once: one plain summary
+  // first, then how to read the chart, then the method behind a disclosure. A new entry that
+  // skips the summary, or puts method rows above it, silently breaks that for every reader.
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  const keys = Array.from(doc.querySelectorAll("[data-info]")).map(b => b.dataset.info);
+  assert.ok(keys.length >= 10, `expected the page to expose most dialogs, got ${keys.length}`);
+
+  keys.forEach(key => {
+    fireClick(window, doc.querySelector(`[data-info="${key}"]`));
+    const body = doc.getElementById("modal-body");
+
+    const summary = body.querySelector("p.modal-summary");
+    assert.ok(summary, `the "${key}" dialog has no summary`);
+    assert.equal(body.firstElementChild, summary,
+      `the "${key}" dialog should open with its summary, not with ${body.firstElementChild.tagName}`);
+    assert.ok(summary.textContent.split(/\s+/).length <= 30,
+      `the "${key}" dialog's summary is ${summary.textContent.split(/\s+/).length} words; keep it to one sentence`);
+
+    assert.ok(body.querySelector("dl"), `the "${key}" dialog has no method rows`);
+    doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
+  });
+});
+
+test("method detail is collapsed by default, and stays expanded once opened", async () => {
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  fireClick(window, doc.querySelector('[data-info="sector-chart"]'));
+  const details = doc.querySelector("#modal-body details.method-block");
+  assert.ok(details, "chart dialogs should put their method rows behind a disclosure");
+  assert.equal(details.open, false, "method detail should start collapsed for a first-time reader");
+
+  // Expanding is a preference, not a per-dialog state: an expert opens it once and every dialog
+  // thereafter opens expanded. jsdom doesn't fire `toggle` off an `open` assignment, so drive it
+  // the way a click does.
+  details.open = true;
+  details.dispatchEvent(new window.Event("toggle"));
+  doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
+
+  fireClick(window, doc.querySelector('[data-info="gas-chart"]'));
+  assert.equal(doc.querySelector("#modal-body details.method-block").open, true,
+    "a different chart's dialog should honour the remembered expanded state");
+});
+
+test("the methodology dialog shows its detail without a disclosure", async () => {
+  // Someone who clicked "Full methodology & sources" has already asked for the method; putting
+  // it behind a second click would be perverse.
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  fireClick(window, doc.querySelector('[data-info="general-methodology"]'));
+  assert.equal(doc.querySelector("#modal-body details.method-block"), null);
+  assert.ok(doc.querySelector("#modal-body dl dt"), "methodology rows should render directly");
+});
+
+test("following a cross-reference shows a breadcrumb back to where it came from", async () => {
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+  const back = doc.getElementById("modal-back");
+
+  fireClick(window, doc.querySelector('[data-info="gas-chart"]'));
+  assert.ok(back.classList.contains("is-hidden"),
+    "a dialog opened from the page has nowhere to go back to");
+
+  fireClick(window, doc.querySelector('#modal-body .info-link[data-info="horizon-toggle"]'));
+  assert.equal(doc.getElementById("modal-title").textContent, "100-year vs 20-year time horizon");
+  assert.ok(!back.classList.contains("is-hidden"), "breadcrumb should appear after a cross-reference");
+  assert.match(back.textContent, /Emissions by greenhouse gas/);
+
+  fireClick(window, back);
+  assert.equal(doc.getElementById("modal-title").textContent, "Emissions by greenhouse gas");
+  assert.ok(back.classList.contains("is-hidden"), "breadcrumb should clear once back at the root");
+
+  // Opening a dialog from the page again is a fresh start, not a continuation of the old trail.
+  fireClick(window, doc.querySelector('#modal-body .info-link[data-info="horizon-toggle"]'));
+  doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
+  fireClick(window, doc.querySelector('[data-info="sector-chart"]'));
+  assert.ok(back.classList.contains("is-hidden"), "closing the dialog should clear the trail");
 });

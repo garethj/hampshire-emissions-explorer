@@ -299,19 +299,53 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
    link rather than a button so it reads as part of the sentence, not as a control. */
 .info-link {
   font: inherit; color: var(--brand); background: none; border: none;
-  cursor: pointer; text-decoration: underline; padding: 0;
+  cursor: pointer; text-decoration: underline; padding: 0; text-align: left;
 }
 .info-link:hover { text-decoration: none; }
-/* The fixed-scale setter note, rendered last. Set apart as an aside so it reads as a technical
-   footnote rather than as another paragraph of the explanation. */
-.modal p.modal-note {
-  font-size: 0.82rem; color: var(--text-muted);
-  border-top: 1px solid var(--border); padding-top: 10px; margin-top: 14px;
+
+/* Breadcrumb back to the dialog a cross-reference was followed from. Sits above the title in the
+   non-scrolling head, so it stays reachable however far down the reader has scrolled. */
+.modal-head-text { min-width: 0; }
+.modal-back {
+  font: inherit; font-size: 0.78rem; color: var(--text-muted); background: none;
+  border: none; cursor: pointer; padding: 0 0 4px; display: block; text-align: left;
 }
-.modal p.modal-note + p.modal-note { border-top: none; padding-top: 0; margin-top: -4px; }
-.modal dl { margin: 0; font-size: 0.9rem; }
-.modal dt { font-weight: 700; margin-top: 10px; color: var(--text-primary); }
-.modal dd { margin: 2px 0 0; color: var(--text-secondary); }
+.modal-back:hover { color: var(--brand); }
+.modal-back.is-hidden { display: none; }
+
+/* The three-part dialog: a summary everyone reads, bullets on reading the chart, then the method
+   behind a disclosure. The size step from summary to bullets to method rows is what signals the
+   hierarchy — without it the reader has no way to tell which parts they can skip. */
+.modal p.modal-summary {
+  font-size: 1.02rem; line-height: 1.45; color: var(--text-primary); margin-bottom: 14px;
+}
+/* A derived headline figure for the current selection (the generation chart's demand
+   comparison). A finding, not a caveat, so it leads — set off from the static summary above it. */
+.modal p.modal-figure {
+  font-size: 0.9rem; color: var(--text-primary);
+  background: var(--page-plane); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;
+}
+.modal ul.read-it { margin: 0 0 16px; padding-left: 20px; font-size: 0.9rem; color: var(--text-secondary); }
+.modal ul.read-it li { margin-bottom: 7px; line-height: 1.5; }
+.modal ul.read-it li:last-child { margin-bottom: 0; }
+
+.modal details.method-block { border-top: 1px solid var(--border); padding-top: 4px; }
+.modal details.method-block > summary {
+  cursor: pointer; list-style: none; padding: 8px 0;
+  font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
+}
+.modal details.method-block > summary::-webkit-details-marker { display: none; }
+.modal details.method-block > summary::before {
+  content: "\25B8"; display: inline-block; width: 14px; transition: transform 0.15s ease;
+}
+.modal details.method-block[open] > summary::before { transform: rotate(90deg); }
+.modal details.method-block > summary:hover { color: var(--brand); }
+
+.modal dl { margin: 0 0 4px; font-size: 0.85rem; }
+.modal dt { font-weight: 700; margin-top: 12px; color: var(--text-primary); }
+.modal dl > dt:first-child { margin-top: 4px; }
+.modal dd { margin: 3px 0 0; color: var(--text-secondary); line-height: 1.5; }
+.modal p.method-link { font-size: 0.85rem; margin-top: 14px; }
 
 @media (max-width: 480px) {
   .brand-text h1 { font-size: 1.15rem; }
