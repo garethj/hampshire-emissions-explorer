@@ -295,6 +295,20 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
   line-height: 1; color: var(--text-muted); cursor: pointer; padding: 4px;
 }
 .modal-close:hover { color: var(--text-primary); }
+/* Inline cross-reference to another dialog entry ([[key|label]] in INFO_CONTENT). Styled as a
+   link rather than a button so it reads as part of the sentence, not as a control. */
+.info-link {
+  font: inherit; color: var(--brand); background: none; border: none;
+  cursor: pointer; text-decoration: underline; padding: 0;
+}
+.info-link:hover { text-decoration: none; }
+/* The fixed-scale setter note, rendered last. Set apart as an aside so it reads as a technical
+   footnote rather than as another paragraph of the explanation. */
+.modal p.modal-note {
+  font-size: 0.82rem; color: var(--text-muted);
+  border-top: 1px solid var(--border); padding-top: 10px; margin-top: 14px;
+}
+.modal p.modal-note + p.modal-note { border-top: none; padding-top: 0; margin-top: -4px; }
 .modal dl { margin: 0; font-size: 0.9rem; }
 .modal dt { font-weight: 700; margin-top: 10px; color: var(--text-primary); }
 .modal dd { margin: 2px 0 0; color: var(--text-secondary); }

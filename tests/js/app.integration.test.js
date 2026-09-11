@@ -700,9 +700,18 @@ test("each fixed-scale chart's info dialog states which control combination curr
   fireClick(window, doc.querySelector('[data-view="historical"]'));
   fireClick(window, doc.querySelector('[data-metric="per_capita"]'));
 
+  // The setter sentence is rendered as a .modal-note aside at the *end* of the dialog, not as
+  // its opening paragraph — a general reader's first sentence should say what the chart shows,
+  // not why its axis is a particular height. Selecting by class rather than position keeps this
+  // test pinned to that intent rather than to the paragraph order.
   function infoIntro(key) {
     fireClick(window, doc.querySelector(`[data-info="${key}"]`));
-    const text = doc.querySelector("#modal-body p").textContent;
+    const note = doc.querySelector("#modal-body p.modal-note");
+    assert.ok(note, `no .modal-note setter sentence in the "${key}" dialog`);
+    const text = note.textContent;
+    const first = doc.querySelector("#modal-body p").textContent;
+    assert.notEqual(first, text,
+      `the "${key}" dialog opens with its axis-setter note; that belongs last, not first`);
     doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
     return text;
   }
@@ -922,4 +931,45 @@ test("hovering a derived electricity-split row ('Show all fuel types') shows the
 
   assert.ok(subRows.some((r) => /Total electricity/.test(r)), `expected a "Total electricity" calculation row, got: ${JSON.stringify(subRows)}`);
   assert.ok(subRows.some((r) => r.includes(mix.fossilPct.toFixed(1))), `expected the DUKES fossil share (${mix.fossilPct.toFixed(1)}%) shown in the calculation, got: ${JSON.stringify(subRows)}`);
+});
+
+test("info dialog cross-references open the dialog they name", async () => {
+  // Each concept is explained once and linked from everywhere else that touches it ([[key|label]]
+  // in INFO_CONTENT). Those links are built when a dialog renders, so they can only work off a
+  // delegated click handler — a static querySelectorAll at wire-up never sees them. This test is
+  // what catches that regressing back to per-button binding.
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  fireClick(window, doc.querySelector('[data-info="gas-chart"]'));
+  const link = doc.querySelector('#modal-body .info-link[data-info="horizon-toggle"]');
+  assert.ok(link, "gas chart dialog should link to the time-horizon explanation");
+
+  fireClick(window, link);
+  assert.equal(doc.getElementById("modal-title").textContent,
+    "100-year vs 20-year time horizon");
+});
+
+test("no info dialog leaves an unrendered [[key|label]] marker, or points at a missing entry", async () => {
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  const keys = Array.from(doc.querySelectorAll("[data-info]")).map(b => b.dataset.info);
+  assert.ok(keys.length > 0);
+
+  keys.forEach(key => {
+    fireClick(window, doc.querySelector(`[data-info="${key}"]`));
+    const body = doc.getElementById("modal-body");
+    assert.ok(!/\[\[|\]\]/.test(body.textContent),
+      `the "${key}" dialog rendered a raw cross-reference marker: ${body.textContent}`);
+    body.querySelectorAll(".info-link").forEach(a => {
+      fireClick(window, a);
+      assert.ok(doc.getElementById("modal-title").textContent.length > 0,
+        `"${key}" links to "${a.dataset.info}", which has no INFO_CONTENT entry`);
+      fireClick(window, doc.querySelector(`[data-info="${key}"]`));
+    });
+    doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
+  });
 });

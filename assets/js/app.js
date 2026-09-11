@@ -2432,114 +2432,143 @@
 
   // ---------------- info modal ----------------
 
+  // Body/dd strings may contain [[key|label]], rendered as an inline button that opens another
+  // entry in this same dialog (see renderRichText). That's the mechanism for keeping one
+  // canonical explanation of each concept — GWP weighting lives in "horizon-toggle", parish
+  // apportionment in "general-methodology", grid pooling in "generation-chart", the toe/MWh
+  // factor in "energy-unit-toggle" — instead of restating it in every dialog that touches it.
+  //
+  // dynamicIntro renders above the body, dynamicOutro below it. The fixed-scale setter note is
+  // an outro deliberately: it's a precise answer to "why is the axis this high", which matters
+  // to someone auditing the chart but is the wrong first sentence for someone who just wants to
+  // know what the chart shows. Only the generation chart has a genuine intro — its headline
+  // generation-vs-demand figure, which is a finding rather than a caveat.
   const INFO_CONTENT = {
     "region-toggle": {
       title: "Choosing a region",
       body: [
-        "Every current Hampshire local authority and every proposed future unitary is here, in three groups. \"Historic districts\" are the 11 district/borough councils that exist today under Hampshire County Council's two-tier system — Basingstoke and Deane, East Hampshire, Eastleigh, Fareham, Gosport, Hart, Havant, New Forest, Rushmoor, Test Valley and Winchester. \"Current unitaries\" are Portsmouth, Southampton and the Isle of Wight — already unitary authorities today, each covering only its own area. \"Proposed unitaries (2028)\" are the four new unitary authorities that replace all 14 of the above from 1 April 2028, under the Government's Local Government Reorganisation decision of 25 March 2026: North Hampshire, Mid-Hampshire, South East Hampshire and South West Hampshire.",
-        "Isle of Wight is unaffected by the decision and stays exactly as it is. Portsmouth and Southampton, by contrast, don't remain standalone — Portsmouth is absorbed into South East Hampshire, Southampton into South West Hampshire. Three of the four new unitaries also pick up a handful of parishes moving from a Mid-Hampshire district: South East Hampshire gains Clanfield, Horndean and Rowlands Castle from East Hampshire and Newlands from Winchester; South West Hampshire gains Totton and Eling, Marchwood, Hythe and Dibden and Fawley from New Forest, and Chilworth, Nursling and Rownhams and Valley Park from Test Valley. No official sub-district emissions data exists for any of this, so each affected district's contribution is apportioned by 2021 Census parish population share rather than left as a whole-district guess — see \"Full methodology & sources\" below for the exact fractions.",
-        "Hampshire and the Solent is the Combined County Authority established 4 June 2026 (SI 2026/595), covering the whole of Hampshire plus Portsmouth, Southampton and the Isle of Wight — the strategic tier every other region here sits underneath. Unlike the four new unitaries, this one already exists, and its footprint isn't affected by exactly where any moving parish ends up, since they all stay inside it either way.",
-        "The historic districts and current unitaries always show today's whole-district figures — not an LGR-adjusted fragment — even though a few of them also contribute a population-weighted slice to a neighbouring proposed unitary's total.",
+        "The selector lists every current Hampshire local authority and every proposed future unitary, in three groups.",
+        "\"Historic districts\" are the 11 district and borough councils that exist today under Hampshire County Council's two-tier system. \"Current unitaries\" are Portsmouth, Southampton and the Isle of Wight, each already a unitary authority covering only its own area. \"Proposed unitaries (2028)\" are the four new authorities that replace all 14 of the above from 1 April 2028, under the Government's Local Government Reorganisation (LGR) decision of 25 March 2026: North Hampshire, Mid-Hampshire, South East Hampshire and South West Hampshire.",
+        "The Isle of Wight is unaffected and stays exactly as it is. Portsmouth and Southampton don't remain standalone: Portsmouth is absorbed into South East Hampshire, Southampton into South West Hampshire.",
+        "Three of the four new unitaries also gain parishes moving out of a Mid-Hampshire district. South East Hampshire gains Clanfield, Horndean and Rowlands Castle from East Hampshire, and Newlands from Winchester. South West Hampshire gains Totton and Eling, Marchwood, Hythe and Dibden and Fawley from New Forest, and Chilworth, Nursling and Rownhams and Valley Park from Test Valley.",
+        "No official sub-district emissions data exists for any of this. Each affected district's contribution is therefore apportioned by 2021 Census parish population share, rather than left as a whole-district guess. [[general-methodology|Full methodology & sources]] gives the exact fractions used, and where that method is weakest.",
+        "\"Hampshire and the Solent\" is the Combined County Authority established 4 June 2026 (SI 2026/595). It covers the whole of Hampshire plus Portsmouth, Southampton and the Isle of Wight — the strategic tier every other region here sits underneath. Unlike the four new unitaries it already exists, and its footprint doesn't depend on where any moving parish ends up, since they all stay inside it either way.",
+        "Historic districts and current unitaries always show today's whole-district figures, never an LGR-adjusted fragment — even where one of them also contributes a population-weighted slice to a neighbouring proposed unitary's total.",
         "The new-unitary decision is subject to a judicial review sought by Hampshire County Council, so these boundaries are the current best information, not guaranteed final."
       ]
     },
     "metric-toggle": {
       title: "Totals vs per-person figures",
       body: [
-        "\"Totals\" is each region's raw figure — kt CO2e for emissions, GWh/ktoe for energy. \"Per person\" divides that same figure by the region's population, so different-sized areas can be compared on equal terms (Southampton's total emissions dwarf Winchester's largely because it has far more people, not because each resident emits more).",
-        "The population used is DESNZ's own mid-year population estimate, published in the same dataset as the emissions figures (not a separate Census or ONS source). For a composite region — a proposed unitary, or Hampshire and the Solent — it's summed across the constituent local authorities the same way emissions are summed, including the same population-weighted scaling for the three historic districts split by the Local Government Reorganisation boundary change (see the region selector's \"i\" button, and \"Full methodology & sources\" below).",
-        "Hover any chart while \"Per person\" is selected to see the actual population figure a given region/year was divided by, alongside the value itself."
+        "\"Totals\" is each region's raw figure — kt CO2e for emissions, GWh or ktoe for energy.",
+        "\"Per person\" divides that same figure by the region's population, so areas of different size can be compared on equal terms. Southampton's total emissions dwarf Winchester's largely because it has far more people, not because each resident emits more.",
+        "The population used is DESNZ's own mid-year estimate, published in the same dataset as the emissions figures — not a separate Census or ONS source.",
+        "For a composite region — a proposed unitary, or Hampshire and the Solent — population is summed across the constituent local authorities exactly as emissions are, including the same population-weighted scaling for the three districts split by the LGR boundary change. See [[region-toggle|Choosing a region]] and [[general-methodology|Full methodology & sources]].",
+        "Hover any chart while \"Per person\" is selected to see the actual population a given region and year was divided by, alongside the value itself."
       ]
     },
     "horizon-toggle": {
       title: "100-year vs 20-year time horizon",
       body: [
-        "Methane (CH4) traps far more heat than CO2 while it's in the atmosphere, but breaks down over a decade or two, whereas CO2 lingers for centuries. To compare gases on one scale, emissions statistics weight each gas by its Global Warming Potential (GWP) — how much warming a tonne of it causes relative to a tonne of CO2, over a chosen time window.",
-        "DESNZ's official figures (\"100-year\" here) use GWP100 — the international reporting standard, and the default view on this site. Judged over 100 years, methane is weighted at 28x CO2 (IPCC AR5).",
-        "The \"20-year\" view reweights the same underlying gas quantities using GWP20 instead — methane at 84x CO2, roughly 3x higher than under GWP100. Nitrous oxide (N2O), the other major non-CO2 gas here, barely changes between the two (264x vs 265x), since it persists for over a century either way. Nothing about the underlying emissions changes — only how heavily methane counts.",
-        "Why it matters: a shorter horizon reflects the urgency of near-term warming and the fact that cutting methane now has an outsized effect on the next few decades' peak temperature — a case increasingly made in climate policy discussion, though GWP100 remains the official reporting basis DESNZ, the UK Government and the UNFCCC use. Areas with more livestock farming or landfill waste (both largely methane) look proportionally worse under the 20-year view than the official 100-year figures suggest; areas dominated by transport and heating (mostly CO2) barely move.",
-        "This 20-year view is calculated here, not published by DESNZ — it rescales each gas's contribution to the official CO2e figure by GWP20/GWP100 for that gas (IPCC AR5 Table 8.A.1, without climate-carbon feedbacks: CO2=1/1, CH4=84/28, N2O=264/265). Every other part of the methodology (boundaries, population, sectors) is identical between the two views."
+        "Methane (CH4) traps far more heat than CO2 while it's in the atmosphere, but breaks down within a decade or two. CO2 lingers for centuries.",
+        "To compare gases on one scale, emissions statistics weight each gas by its Global Warming Potential (GWP): how much warming a tonne of it causes relative to a tonne of CO2, over a chosen time window.",
+        "DESNZ's official figures — \"100-year\" here, and this site's default — use GWP100, the international reporting standard. Judged over 100 years, methane is weighted at 28x CO2 (IPCC AR5).",
+        "The \"20-year\" view reweights the same underlying gas quantities using GWP20 instead, putting methane at 84x CO2 — roughly three times heavier. Nitrous oxide (N2O), the other major non-CO2 gas here, barely changes between the two (264x vs 265x), since it persists for over a century either way. Nothing about the underlying emissions changes; only how heavily methane counts.",
+        "Why it matters: a shorter horizon reflects the urgency of near-term warming, and the fact that cutting methane now has an outsized effect on the next few decades' peak temperature. That case is increasingly made in climate policy discussion, though GWP100 remains the official reporting basis used by DESNZ, the UK Government and the UNFCCC.",
+        "In practice, areas with more livestock farming or landfill waste — both largely methane — look proportionally worse under the 20-year view than the official figures suggest. Areas dominated by transport and heating, mostly CO2, barely move.",
+        "Calculated here, not published by DESNZ. This site rescales each gas's contribution to the official CO2e figure by GWP20/GWP100 for that gas, using IPCC AR5 Table 8.A.1 without climate-carbon feedbacks: CO2 = 1/1, CH4 = 84/28, N2O = 264/265. Every other part of the methodology — boundaries, population, sectors — is identical between the two views."
       ]
     },
     "energy-unit-toggle": {
       title: "MWh-based vs ktoe-based units",
       body: [
-        "Renewable generation and energy consumption come from two different DESNZ datasets, each published in its own native unit: generation in MWh (shown here as GWh, or kWh per person), consumption in ktoe — kilotonnes of oil equivalent (shown as ktoe, or toe per person). This toggle picks one shared unit family for both charts, named after each dataset's own published unit, and converts whichever chart isn't already in that family using the standard DUKES/IEA factor of 1 toe = 11.63 MWh.",
-        "\"MWh-based\" keeps generation as DESNZ publishes it and converts consumption into GWh / kWh per person. \"ktoe-based\" keeps consumption as DESNZ publishes it and converts generation into ktoe / toe per person. Neither option is more \"correct\" than the other — pick whichever makes the two charts easier to compare directly."
+        "Renewable generation and energy consumption come from two different DESNZ datasets, each published in its own native unit: generation in MWh (shown here as GWh, or kWh per person), consumption in ktoe — kilotonnes of oil equivalent (shown as ktoe, or toe per person).",
+        "This toggle picks one shared unit family for both charts, named after each dataset's own published unit, and converts whichever chart isn't already in that family using the standard DUKES/IEA factor of 1 toe = 11.63 MWh.",
+        "\"MWh-based\" keeps generation as DESNZ publishes it and converts consumption into GWh or kWh per person. \"ktoe-based\" keeps consumption as DESNZ publishes it and converts generation into ktoe or toe per person.",
+        "Neither option is more correct than the other — pick whichever makes the two charts easier to compare directly."
       ]
     },
     "scale-mode-toggle": {
       title: "Fixed vs auto scale",
       body: [
-        "Every chart on this site defaults to \"Fixed scale\": one shared axis maximum for every region being compared, rather than each chart resizing itself to whichever region happens to be selected. For the sector, gas, generation and consumption charts, total figures share one scale per tier (historic districts share one scale, current unitaries another, proposed unitaries another — Hampshire and the Solent has no tier-mates, so it's unaffected either way), since tiers differ hugely in population and area; per-person figures instead share one scale across all 20 regions, since per-person values divide out exactly the population difference tiers exist to separate — a district's and a unitary's per-person figures are directly comparable. The trend chart always uses one scale across all 20 regions, on either metric, since a single trend chart can show more than one tier together (a district alongside its own unitary and Hampshire and the Solent). Switching the region selector no longer rescales the axis, so a real difference in volume stays visible as a difference in bar height or line position, not just a number you'd otherwise have to read closely to notice.",
-        "The trade-off: a small area's bar can end up short on a shared scale, which can make its own internal split (which sector, which technology, which fuel) harder to read at a glance. \"Auto scale\" switches back to sizing each chart to its own region's figures, trading that comparability away for a clearer read of one area on its own — useful if you want to see a smaller area's own composition rather than compare it against a much larger neighbour.",
-        "The \"Latest year\" and \"Historical trend\" views intentionally use different fixed maxima, rather than sharing one: \"Latest year\" scales to the highest value seen across the comparison set in that one latest year, so a genuine decline since earlier years (UK-wide territorial emissions have fallen substantially since 2005, for example) doesn't leave every current bar looking artificially small against a much higher historical peak. \"Historical trend\" scales to the highest value across the comparison set's *entire* published history, so its line doesn't rescale as you scan across years within that one view. A bar chart and a line chart aren't being compared side by side, so there's no need for the two views to share one number — expect the axis to change when you switch between them; that's by design, not a bug.",
-        "The sector, gas and trend charts' fixed scale also spans both the 100-year and 20-year GWP time horizons at once, rather than each getting its own maximum: unlike region tier, a horizon switch doesn't come from a population difference, but sharing one range means flipping that toggle for a single region doesn't rescale the axis either, so a genuine change in the picture (methane-heavy sectors growing under the 20-year weighting) stays visible as a change in bar or line size rather than a moving axis. If that leaves the 100-year view looking compressed, switch to auto scale.",
-        "The sector chart's latest-year bars are the one case with a symmetric axis either side of zero (the largest magnitude in either direction, since a diverging bar's left/right length needs one consistent scale to stay comparable) — its historical trend line instead uses the comparison set's actual highest and lowest values independently, since a line's vertical position isn't a length comparison the same way. The sector chart's sub-sector detail view is a further exception: sub-sector figures are only published for the latest year, so that view's shared maximum only ever scans that one year, regardless of view."
+        "Every chart here defaults to \"Fixed scale\": one shared axis maximum across the regions being compared, instead of each chart resizing itself to whichever region happens to be selected. Switching region no longer rescales the axis, so a real difference in volume stays visible as a difference in bar height or line position — not just a number you'd have to read closely to notice.",
+        "The trade-off: on a shared scale a small area's bar can end up short, which makes its own internal split — which sector, which technology, which fuel — harder to read at a glance. \"Auto scale\" sizes each chart to its own region's figures instead, trading comparability for a clearer read of one area on its own.",
+        "Which regions share a scale, on totals: the sector, gas, generation and consumption charts use one scale per tier. Historic districts share one, current unitaries another, proposed unitaries another. Tiers differ hugely in population and area, so a single scale spanning all of them would flatten the smaller ones. Hampshire and the Solent has no tier-mates, so it's unaffected either way.",
+        "Which regions share a scale, per person: one scale across all 20 regions. Per-person values divide out exactly the population difference that tiers exist to separate, so a district's and a unitary's figures are directly comparable.",
+        "The trend chart is the exception: it always uses one scale across all 20 regions, on either metric, because a single trend chart can show more than one tier at once — a district alongside its own unitary and Hampshire and the Solent.",
+        "\"Latest year\" and \"Historical trend\" deliberately use different fixed maxima rather than sharing one. \"Latest year\" scales to the highest value across the comparison set in that one year, so a genuine decline since 2005 doesn't leave every current bar looking artificially small against a much higher historical peak. \"Historical trend\" scales to the highest value across the set's entire published history, so its line doesn't rescale as you scan across years. The two are never on screen together, so expect the axis to change when you switch between them — that's by design, not a bug.",
+        "The sector, gas and trend charts' fixed scale also spans both GWP time horizons at once. A horizon switch isn't a population difference, but sharing one range means flipping that toggle for a single region doesn't rescale the axis either, so a genuine change in the picture — methane-heavy sectors growing under the 20-year weighting — stays visible as a change in bar or line size rather than a moving axis. If that leaves the 100-year view looking compressed, switch to auto scale. See [[horizon-toggle|100-year vs 20-year time horizon]].",
+        "Two further exceptions, both on the sector chart. Its latest-year bars use a symmetric axis either side of zero, set by the largest magnitude in either direction, since a diverging bar's left and right lengths need one consistent scale to stay comparable; its historical trend line instead uses the comparison set's actual highest and lowest values independently, because a line's vertical position isn't a length comparison in the same way. And its sub-sector detail view only ever scans the latest year for a shared maximum, whichever view is selected, because sub-sector figures are published for that year alone."
       ]
     },
     "trend-chart": {
       title: "Total emissions over time",
-      dynamicIntro: () => trendScaleNoteText,
+      dynamicOutro: () => trendScaleNoteText,
       body: [
         "Territorial greenhouse gas emissions (CO2, CH4 and N2O, combined as CO2e) for each year 2005–2024, summed across all sectors.",
-        "This chart plots the selected region in its hierarchy context, not a fixed set of regions: it always shows Hampshire and the Solent, plus the selected region's own line, plus (for a historic district or current unitary) the proposed unitary it rolls up to — e.g. picking Eastleigh shows Eastleigh, South West Hampshire and Hampshire and the Solent. Tick \"Compare all constituents\" to switch instead to every sibling at the nearest useful level — all historic districts within the selected unitary, or all unitaries within Hampshire and the Solent.",
-        "Use the control panel above to switch between totals (kt CO2e) and per-person figures (t CO2e per person), between a single latest-year comparison and the full historical trend, and between the 100-year and 20-year GWP time horizons (see the \"i\" button next to Time horizon above for what that means). The Fixed/Auto scale toggle above the chart applies here too — fixed to one true site-wide maximum spanning both GWP horizons, not a per-tier or per-horizon one, since this chart can mix tiers on one screen and the point of fixing the scale is to make a region's own horizon switch legible too; see that toggle's own \"i\" button for why.",
-        "Historic districts and current unitaries are the official DESNZ district figures, published directly. Every other region here — the four proposed unitaries and Hampshire and the Solent — is calculated by summing those same DESNZ district figures; none of them is an official published figure.",
-        "In the historical trend view, dashed lines extend each region's latest actual figure out to zero at its own net-zero target — a straight-line \"required pathway\" showing the average pace of reduction still needed from here. Winchester's own line targets 2030, its more ambitious district-wide carbon-neutral target from its Carbon Neutrality Action Plan; every other region has no target of its own yet, so its line targets 2050 instead, the Hampshire County Council area target (aligned to the UK Government's own legally-binding 2050 target). This is the simplest honest read of the numbers, not a modelled decarbonisation forecast — real pathways are rarely a straight line.",
+        "This chart plots the selected region in its hierarchy context rather than a fixed set of regions. It always shows Hampshire and the Solent, plus the selected region's own line, plus — for a historic district or current unitary — the proposed unitary it rolls up to. Picking Eastleigh, for example, shows Eastleigh, South West Hampshire and Hampshire and the Solent.",
+        "Tick \"Compare all constituents\" to switch instead to every sibling at the nearest useful level: all historic districts within the selected unitary, or all unitaries within Hampshire and the Solent.",
+        "Official vs calculated here: historic districts and current unitaries are DESNZ's own published district figures. Every other region — the four proposed unitaries and Hampshire and the Solent — is calculated by summing those same district figures, and is not an official published figure. See [[general-methodology|Full methodology & sources]].",
+        "In the historical trend view, dashed lines extend each region's latest actual figure out to zero at its own net-zero target — a straight-line \"required pathway\" showing the average pace of reduction still needed from here. Winchester's line targets 2030, its district-wide carbon-neutral target from its Carbon Neutrality Action Plan. Every other region has no target of its own yet, so its line targets 2050: the Hampshire County Council area target, aligned to the UK Government's legally-binding 2050 target.",
+        "That pathway is the simplest honest read of the numbers, not a modelled decarbonisation forecast — real pathways are rarely a straight line.",
+        "Under fixed scale this chart uses one site-wide maximum, across all 20 regions and both GWP horizons, rather than a per-tier or per-horizon one. See [[scale-mode-toggle|Fixed vs auto scale]].",
         "Source: DESNZ UK local authority and regional greenhouse gas emissions statistics, 2005–2024 (published 25 June 2026)."
       ],
       link: { href: "https://assets.publishing.service.gov.uk/media/6a3bacc9d52550a19950f2f5/2005-24-local-authority-ghg-emissions-csv-dataset.csv", label: "Download the source CSV" }
     },
     "sector-chart": {
       title: "Emissions by sector",
-      dynamicIntro: () => sectorScaleNoteText,
+      dynamicOutro: () => sectorScaleNoteText,
       body: [
-        "Territorial emissions split by the eight DESNZ sectors (Agriculture, Commercial, Domestic, Industry, LULUCF, Public Sector, Transport, Waste), each summed across their sub-sectors and gases.",
-        "Use the control panel above to switch between totals and per-person figures, and between a latest-year snapshot and each sector's trend since 2005. In the latest-year view, tick “Show sub-sector detail” to break each sector down further (e.g. Transport into road, rail and other) — sub-sector figures are only published for the latest year, so this detail isn't available in the historical trend view.",
-        "The Time horizon toggle changes how heavily this chart weights methane — switching it to \"20-year\" makes Agriculture and Waste (the two most methane-heavy sectors) noticeably larger relative to the others; Transport, Domestic and Commercial (mostly CO2) barely move. See the \"i\" button next to Time horizon above for why.",
-        "LULUCF (land use, land-use change and forestry) is usually negative — it represents a net carbon sink from woodland, hedgerows and soils, which subtracts from the total rather than adding to it.",
-        "For Mid-Hampshire, each sector is the sum of that sector's figure across the four constituent districts."
+        "Territorial emissions split by the eight DESNZ sectors — Agriculture, Commercial, Domestic, Industry, LULUCF, Public Sector, Transport and Waste — each summed across its sub-sectors and gases.",
+        "In the latest-year view, tick \"Show sub-sector detail\" to break each sector down further, for example Transport into road, rail and other. Sub-sector figures are only published for the latest year, so this detail isn't available in the historical trend view.",
+        "LULUCF (land use, land-use change and forestry) is usually negative: it represents a net carbon sink from woodland, hedgerows and soils, which subtracts from the total rather than adding to it.",
+        "Switching the time horizon to \"20-year\" makes Agriculture and Waste — the two most methane-heavy sectors — noticeably larger relative to the others. Transport, Domestic and Commercial, mostly CO2, barely move. See [[horizon-toggle|100-year vs 20-year time horizon]].",
+        "For a composite region, each sector is the sum of that sector's figure across the constituent districts, scaled as described in [[region-toggle|Choosing a region]]."
       ]
     },
     "gas-chart": {
       title: "Emissions by greenhouse gas",
-      dynamicIntro: () => gasScaleNoteText,
+      dynamicOutro: () => gasScaleNoteText,
       body: [
-        "The same territorial emissions as the sector chart above, split instead by the three gases DESNZ publishes at local authority level: CO2, methane (CH4) and nitrous oxide (N2O) — each already converted to CO2e using the active time horizon (see the Time horizon toggle above).",
-        "CO2 is almost entirely energy use — heating, electricity, vehicle fuel. CH4 is mostly agriculture (livestock) and waste (landfill). N2O is mostly agriculture (fertilised soils) and manure management. This split is a useful cross-check on the sector chart: two areas can have the same total emissions for very different reasons — one dominated by CO2 from transport and heating, another by CH4 from farming — and this chart is what makes that visible.",
-        "Switch the Time horizon toggle to \"20-year\" and watch the CH4 bar roughly triple while CO2 and N2O barely move — the clearest single illustration on this site of what that toggle actually does. Fluorinated gases (HFCs etc.) are excluded here, as DESNZ excludes them from local authority statistics entirely (they're under 2% of the UK total).",
-        "Use the control panel above to switch between totals and per-person figures, and between a latest-year snapshot and the trend since 2005."
+        "The same territorial emissions as the sector chart above, split instead by the three gases DESNZ publishes at local authority level: CO2, methane (CH4) and nitrous oxide (N2O). Each is already converted to CO2e using the active time horizon.",
+        "CO2 is almost entirely energy use — heating, electricity, vehicle fuel. CH4 is mostly agriculture (livestock) and waste (landfill). N2O is mostly agriculture, from fertilised soils and manure management.",
+        "This split is a useful cross-check on the sector chart. Two areas can have the same total emissions for very different reasons — one dominated by CO2 from transport and heating, another by CH4 from farming — and this chart is what makes that visible.",
+        "Switch the time horizon to \"20-year\" and the CH4 bar roughly triples while CO2 and N2O barely move: the clearest single illustration on this site of what that toggle does. See [[horizon-toggle|100-year vs 20-year time horizon]].",
+        "Fluorinated gases (HFCs and others) are excluded here, as DESNZ excludes them from local authority statistics entirely. They're under 2% of the UK total."
       ]
     },
     "generation-chart": {
       title: "Renewable electricity generation by technology",
-      dynamicIntro: () => [generationNoteText, generationScaleNoteText],
+      dynamicIntro: () => generationNoteText,
+      dynamicOutro: () => generationScaleNoteText,
       body: [
-        "Renewable electricity generated within the area's boundary, split by technology: Solar (photovoltaics), Wind (onshore + offshore), Hydro, Bioenergy & waste (anaerobic digestion, sewage gas, landfill gas, municipal solid waste, animal and plant biomass, cofiring), and Other (wave/tidal, plus a small residual — see the note further down).",
-        "This is generation, not consumption — how much renewable electricity is physically produced within the area, regardless of where it's ultimately used. The figure above compares this to local electricity demand (from DESNZ's separate energy consumption statistics) — but the two aren't directly connected: Great Britain runs on one shared national grid, so electricity generated by a local wind farm or solar array isn't routed to local homes and businesses, it's exported to the grid and pooled with generation from everywhere else, while local demand draws from that same shared pool. A ratio near or above 100% means an area generates roughly as much renewable electricity as it consumes in total, not that it's disconnected from the grid or self-sufficient in practice.",
-        "DESNZ suppresses some small per-technology generation figures (shown as \"[X]\" in its source workbook) to avoid revealing individual plants' output — mainly affects Wind, Hydro and Bioenergy in these mostly solar-dominated local authorities. This site treats suppressed cells as 0 for their own technology and folds the (small) gap against DESNZ's own published total into \"Other\", so the bars always sum exactly to DESNZ's figure.",
-        "Electricity consumption figures (used for the demand comparison above) are published in ktoe and converted here to MWh using the standard DUKES/IEA factor of 1 toe = 11.63 MWh.",
-        "Generation data starts 2014, the first year DESNZ publishes local authority-level renewable generation; consumption data runs 2005–2024, so the demand comparison is only available from 2014 onward.",
-        "Use the control panel above to switch between totals and per-person figures, and the energy unit toggle above the charts below to switch between GWh/kWh-per-person and ktoe/toe-per-person — see that toggle's own \"i\" button for why. Neither choice affects the demand-comparison percentage above, since it's a ratio of two totals.",
-        "For Mid-Hampshire, each technology is the sum of that technology's figure across the four constituent districts, scaled the same way as the emissions charts (see the region selector's \"i\" button)."
+        "Renewable electricity generated within the area's boundary, split by technology: Solar (photovoltaics), Wind (onshore and offshore), Hydro, Bioenergy & waste (anaerobic digestion, sewage gas, landfill gas, municipal solid waste, animal and plant biomass, cofiring), and Other (wave and tidal, plus a small residual explained below).",
+        "This is generation, not consumption — how much renewable electricity is physically produced within the area, regardless of where it's ultimately used.",
+        "Why the demand comparison isn't self-sufficiency: Great Britain runs on one shared national grid. Electricity from a local wind farm or solar array isn't routed to local homes and businesses; it's exported to the grid and pooled with generation from everywhere else, while local demand draws from that same shared pool. A ratio near or above 100% means an area generates roughly as much renewable electricity as it consumes in total — not that it's disconnected from the grid, or self-sufficient in practice.",
+        "Suppressed figures: DESNZ suppresses some small per-technology figures, shown as \"[X]\" in its source workbook, to avoid revealing individual plants' output. This mainly affects Wind, Hydro and Bioenergy in these mostly solar-dominated local authorities. This site treats a suppressed cell as 0 for its own technology, and folds the resulting small gap against DESNZ's own published total into \"Other\", so the bars always sum exactly to DESNZ's figure.",
+        "Coverage: generation data starts in 2014, the first year DESNZ publishes local authority-level renewable generation. Consumption data runs 2005–2024, so the demand comparison is only available from 2014 onward.",
+        "The electricity consumption figure behind the demand comparison is published in ktoe and converted here to MWh — see [[energy-unit-toggle|MWh-based vs ktoe-based units]]. The energy unit toggle doesn't change the demand-comparison percentage, since that's a ratio of two totals.",
+        "For a composite region, each technology is the sum of that technology's figure across the constituent districts, scaled as described in [[region-toggle|Choosing a region]]."
       ],
       link: { href: "https://www.gov.uk/government/statistics/regional-renewable-statistics", label: "gov.uk statistical release" }
     },
     "consumption-chart": {
       title: "Energy consumption by fuel",
-      dynamicIntro: () => consumptionScaleNoteText,
+      dynamicOutro: () => consumptionScaleNoteText,
       body: [
-        "Total final energy consumed within the area's boundary, covering every fuel — not just electricity: heating, cooking and industrial fuels, and road transport fuel. This is a different DESNZ dataset from the renewable generation chart above, and measures something different too: consumption of all fuel types, rather than local electricity generation. DESNZ publishes this dataset in ktoe (kilotonnes of oil equivalent) — the energy unit toggle just above lets you view it instead in the same GWh/kWh-per-person units as the generation chart; see that toggle's own \"i\" button for details.",
-        "\"By fuel type\" (the default) groups everything into two: Fossil fuels and Green energy — tick \"Show all fuel types\" to break each down into its constituent parts (hovering a bar shows the same breakdown, without needing to tick the box). \"By sector\" switches to a different split of the same total: Domestic, Transport, and Industrial, Commercial and other — useful for telling how much of an area's consumption is households and cars versus workplaces and industry.",
-        "DESNZ publishes six fuel categories for this dataset — Coal, Manufactured fuels, Petroleum, Gas, Electricity, and Bioenergy and wastes — but doesn't say what generated the electricity, since Great Britain's grid pools generation nationally and doesn't attribute it back to the area consuming it. This site fills that gap using DUKES's published national generation mix for that year: Electricity is split into \"Fossil fuel electricity\" and \"Renewable electricity\" at that year's national ratio, applied the same way to every area's own electricity consumption. Hovering either of those two rows in \"Show all fuel types\" shows the calculation itself (this area's total electricity figure and that year's DUKES share) rather than just the result.",
-        "That national ratio is deliberately applied uniformly, not adjusted for what's generated locally. An earlier version of this site instead netted an area's own local renewable generation off first — Winchester's own solar panels, say — before applying the national ratio to the rest. That fell apart on a concrete case: New Forest hosts Marchwood, a large (~900MW) gas-fired power station, entirely invisible to that calculation, since only renewable generation is published by local authority. Netting off local renewables but not the (unmeasured) local fossil generation made New Forest look greener than the national average despite hosting a major fossil plant. Since the grid pools everything, no area's actual electricity draw can honestly differ from the national mix based on what's built nearby — applying one uniform ratio to everyone matches that reality, rather than crediting whichever kind of local generation happens to have published data.",
-        "\"Green energy\" combines two different kinds of number: Bioenergy and wastes is a real, measured quantity (fuel actually burned within the area — wood pellets, biodiesel, industrial biomass); Renewable electricity is a national statistical estimate applied uniformly to this area's own electricity figure. Both are legitimate and both are genuinely renewable/low-carbon by official convention, but they're not the same kind of \"green\" — one is measured here, one is estimated from a national average. The same distinction applies to \"Fossil fuels\": Coal, Manufactured fuels, Petroleum and Gas are measured local combustion; Fossil fuel electricity is the national-mix estimate.",
-        "DUKES's own renewable-generation figure already includes bioenergy-derived electricity (anaerobic digestion, landfill gas, biomass power stations) alongside solar, wind and hydro — the same technologies the generation chart above groups under \"Bioenergy & waste\" — so \"Renewable electricity\" here isn't solar/wind/hydro only. There's no further national breakdown by technology published at this level, so it isn't split any further.",
-        "Oil (petroleum) is typically the largest category here, dominated by road transport fuel — DESNZ's road transport figures are modelled from national/regional fuel sales data apportioned to local authorities, not measured locally.",
-        "This dataset counts every unit of fuel burned within a local authority's boundary, including fuel used by large industrial sites (e.g. oil refining) to make products that are consumed elsewhere — it measures fuel burned on-site, not fuel used by local residents and businesses. DESNZ's emissions statistics attribute CO2 by point-source location under separate rules, and don't necessarily move in step with this consumption total. New Forest is the clearest example: switch to \"By sector\" there and \"Industrial, Commercial and other\" dwarfs Domestic and Transport combined, driven by oil refining rather than local demand — which is also why New Forest's energy consumption looks high next to its emissions figures elsewhere on this site. A large \"Industrial, Commercial and other\" share relative to Domestic and Transport is the signal that a big non-household energy user, not local demand, is driving an area's total.",
-        "Use the control panel above to switch between totals and per-person figures, and the energy unit toggle just above to switch between ktoe/toe-per-person and GWh/kWh-per-person.",
-        "For Mid-Hampshire, each fuel or sector is the sum of that category's figure across the four constituent districts, scaled the same way as the emissions charts (see the region selector's \"i\" button)."
+        "Total final energy consumed within the area's boundary, covering every fuel — heating, cooking and industrial fuels, and road transport fuel — not just electricity.",
+        "This is a different DESNZ dataset from the renewable generation chart above, and measures something different: consumption of all fuel types, rather than local electricity generation. DESNZ publishes it in ktoe; the energy unit toggle above can show it in the same GWh or kWh-per-person units as the generation chart. See [[energy-unit-toggle|MWh-based vs ktoe-based units]].",
+        "\"By fuel type\" (the default) groups everything into two: Fossil fuels and Green energy. Tick \"Show all fuel types\" to break each down into its parts — hovering a bar shows the same breakdown without ticking the box. \"By sector\" splits the same total into Domestic, Transport, and Industrial, Commercial and other, which is useful for telling how much of an area's consumption is households and cars versus workplaces and industry.",
+        "How the electricity split is derived: DESNZ publishes six fuel categories — Coal, Manufactured fuels, Petroleum, Gas, Electricity, and Bioenergy and wastes — but doesn't say what generated the electricity, since Great Britain's grid pools generation nationally and doesn't attribute it back to the area consuming it. This site fills that gap using DUKES's published national generation mix for that year, splitting Electricity into \"Fossil fuel electricity\" and \"Renewable electricity\" at that year's national ratio, applied identically to every area. Hovering either row under \"Show all fuel types\" shows the calculation itself — this area's total electricity figure, and that year's DUKES share — rather than just the result.",
+        "Why that ratio is uniform rather than locally adjusted: since the grid pools everything, no area's actual electricity draw can honestly differ from the national mix based on what's built nearby. Only renewable generation is published by local authority, so netting an area's own renewables off first would credit local green generation while leaving local fossil generation invisible. New Forest is the concrete case: it hosts Marchwood, a roughly 900MW gas-fired power station that no local adjustment can see. Adjusting for local renewables alone would make New Forest look greener than the national average despite that plant sitting inside it. One uniform ratio for every area matches how the grid actually works. See [[generation-chart|Renewable electricity generation by technology]].",
+        "\"Green energy\" combines two different kinds of number. Bioenergy and wastes is a real, measured quantity — fuel actually burned within the area, such as wood pellets, biodiesel and industrial biomass. Renewable electricity is a national statistical estimate applied uniformly to this area's electricity figure. Both are legitimate, and both are genuinely renewable or low-carbon by official convention, but they're not the same kind of \"green\": one is measured here, one is estimated from a national average.",
+        "The same distinction applies within \"Fossil fuels\": Coal, Manufactured fuels, Petroleum and Gas are measured local combustion, while Fossil fuel electricity is the national-mix estimate.",
+        "DUKES's renewable-generation figure already includes bioenergy-derived electricity — anaerobic digestion, landfill gas, biomass power stations — alongside solar, wind and hydro, the same technologies the generation chart groups under \"Bioenergy & waste\". So \"Renewable electricity\" here isn't solar, wind and hydro only. No further national breakdown by technology is published at this level, so it isn't split further.",
+        "Oil (petroleum) is typically the largest category, dominated by road transport fuel. DESNZ's road transport figures are modelled from national and regional fuel sales data apportioned to local authorities, not measured locally.",
+        "What this dataset counts, and doesn't: every unit of fuel burned within a local authority's boundary, including fuel used by large industrial sites — oil refining, for instance — to make products consumed elsewhere. It measures fuel burned on-site, not fuel used by local residents and businesses. DESNZ's emissions statistics attribute CO2 by point-source location under separate rules, and don't necessarily move in step with this consumption total.",
+        "New Forest is again the clearest example: switch to \"By sector\" there and \"Industrial, Commercial and other\" dwarfs Domestic and Transport combined, driven by oil refining rather than local demand. That's also why New Forest's energy consumption looks high next to its emissions figures elsewhere on this site. A large \"Industrial, Commercial and other\" share relative to Domestic and Transport is the signal that a big non-household energy user, not local demand, is driving an area's total.",
+        "For a composite region, each fuel or sector is the sum of that category's figure across the constituent districts, scaled as described in [[region-toggle|Choosing a region]]."
       ],
       link: { href: "https://www.gov.uk/government/collections/total-final-energy-consumption-at-sub-national-level", label: "gov.uk statistical release" }
     },
@@ -2548,23 +2577,55 @@
       dl: [
         ["Primary data source", "DESNZ (Department for Energy Security and Net Zero), “UK local authority and regional greenhouse gas emissions statistics, 2005–2024”, published 25 June 2026."],
         ["Basis", "Territorial emissions — what physically happens within the area's boundary — in kt CO2e (thousand tonnes carbon dioxide equivalent), combining CO2, methane (CH4) and nitrous oxide (N2O)."],
-        ["Time horizon", "The default (\"100-year\") view is DESNZ's own published figures, which weight CH4 and N2O by their 100-year Global Warming Potential (GWP100, IPCC AR5: CH4=28, N2O=265, CO2=1) — the international reporting standard. The \"20-year\" view, toggled above the charts, is calculated by this site (not DESNZ) by reweighting the same gas quantities using GWP20 instead (IPCC AR5: CH4=84, N2O=264, CO2=1) — methane counts roughly 3x more heavily, which raises Agriculture- and Waste-heavy areas' figures noticeably. See the Time horizon \"i\" button for the full explanation."],
-        ["Historic districts & current unitaries", "The 11 historic districts (Basingstoke and Deane, East Hampshire, Eastleigh, Fareham, Gosport, Hart, Havant, New Forest, Rushmoor, Test Valley, Winchester) and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) are DESNZ's own published district figures, used whole and unadjusted — each represents the area as it exists today, not an LGR-adjusted fragment."],
-        ["Mid-Hampshire boundary", "East Hampshire + Winchester + New Forest + Test Valley, per the Government's LGR decision of 25 March 2026, each scaled down to exclude the parishes moving to South East/South West Hampshire under the same decision. No official sub-district emissions data exists, so each district's contribution is reduced by its 2021 Census parish population share instead of using the whole district — East Hampshire to 82.0%, Winchester to 97.7%, New Forest to 61.0%, Test Valley to 88.8%. Decision subject to possible judicial review. This population-based split assumes every category is spread proportionally to population, which understates the share moving out for anything geographically concentrated rather than evenly spread across a district — see South West Hampshire boundary below for a concrete case."],
-        ["North Hampshire boundary", "Basingstoke and Deane + Hart + Rushmoor, whole districts — no parishes move in or out of this one, so no population weighting is needed."],
-        ["South East Hampshire boundary", "Fareham + Gosport + Havant + Portsmouth, whole districts, plus the parishes moving in from Mid-Hampshire: 18.0% of East Hampshire (Clanfield, Horndean, Rowlands Castle) and 2.3% of Winchester (Newlands), by the same 2021 Census parish population share method as the Mid-Hampshire boundary above."],
-        ["South West Hampshire boundary", "Eastleigh + Southampton, whole districts, plus the parishes moving in from Mid-Hampshire: 39.0% of New Forest (Totton and Eling, Marchwood, Hythe and Dibden, Fawley) and 11.2% of Test Valley (Chilworth, Nursling and Rownhams, Valley Park), by the same method. Fawley (Esso's oil refinery) and Marchwood (the gas-fired power station) between them are only around 11% of New Forest's population, so a large share of the district's industrial energy consumption — which this population split spreads 61%/39% between Mid- and South West Hampshire — stays attributed to Mid-Hampshire even though the sites actually driving it sit in the parishes moving here."],
-        ["Isle of Wight, Portsmouth, Southampton as current unitaries", "Unaffected by the LGR decision as separate regions in their own right — Isle of Wight stays a standalone unitary under the new structure too; Portsmouth and Southampton are absorbed into South East/South West Hampshire respectively from 1 April 2028, but their own figures here are simply today's DESNZ district totals."],
-        ["Hampshire and the Solent boundary", "Hampshire County Council + Portsmouth + Southampton + Isle of Wight, per the Hampshire and the Solent Combined County Authority Regulations 2026 (SI 2026/595). Hampshire CC itself isn't a DESNZ-reporting unit, so this is modelled as the sum of all 11 current Hampshire districts plus Portsmouth, Southampton and Isle of Wight, using whole-district figures throughout (this total doesn't need any parish-level adjustment, since it doesn't matter which new unitary those parishes end up in — they stay inside Hampshire and the Solent either way). Equivalently, it's the sum of the four proposed unitaries plus Isle of Wight, which this site's own data pipeline checks against directly."],
-        ["Population / per-person", "DESNZ mid-year population estimates, included in the same dataset, summed the same way as emissions for each region (and scaled down per district for Mid-Hampshire/South East/South West Hampshire, as above)."],
-        ["Update cycle", () => "DESNZ typically publishes new figures each summer, roughly 18–24 months behind the current year. This site's data was last refreshed " + formatIsoDate(DATA.meta.generated) + " and is updated manually when a new release lands."],
-        ["Comparing to other published figures", "DESNZ revises prior years' figures on every release, not just the newest year — so a district's total for a given year (e.g. 2023) can shift slightly between the release that first published it and each subsequent one. A figure quoted elsewhere (a council webpage, a climate action plan) may be citing an earlier DESNZ release than the one this site uses — check the release date before assuming a discrepancy is an error in either source."],
-        ["Energy data", "Renewable electricity generation by technology (2014–2024) and energy consumption by fuel (2005–2024), both from DESNZ, at local authority level, aggregated to every region here the same way as the emissions figures above. See each energy chart's own \"i\" button for category grouping and unit conversions."],
-        ["Data & code", "Every figure on this site traces back to the single published DESNZ CSV linked below, with the affected districts' contributions scaled using 2021 Census parish population shares (see the boundary notes above) — nothing else here is estimated or modelled."]
+        ["Time horizon", "The default \"100-year\" view is DESNZ's own published figures, weighting CH4 and N2O by their 100-year Global Warming Potential (IPCC AR5: CH4 = 28, N2O = 265, CO2 = 1) — the international reporting standard. The \"20-year\" view is calculated by this site, not DESNZ, by reweighting the same gas quantities using GWP20. See [[horizon-toggle|100-year vs 20-year time horizon]]."],
+        ["Historic districts & current unitaries", "The 11 historic districts (Basingstoke and Deane, East Hampshire, Eastleigh, Fareham, Gosport, Hart, Havant, New Forest, Rushmoor, Test Valley, Winchester) and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) are DESNZ's own published district figures, used whole and unadjusted. Each represents the area as it exists today, not an LGR-adjusted fragment."],
+        ["Mid-Hampshire boundary", "East Hampshire + Winchester + New Forest + Test Valley, per the Government's LGR decision of 25 March 2026, each scaled down to exclude the parishes moving to South East and South West Hampshire under the same decision. No official sub-district emissions data exists, so each district's contribution is reduced by its 2021 Census parish population share instead: East Hampshire to 82.0%, Winchester to 97.7%, New Forest to 61.0%, Test Valley to 88.8%. Decision subject to possible judicial review."],
+        ["Limits of the population split", "Apportioning by population assumes every category is spread proportionally to population. That understates the share moving out for anything geographically concentrated rather than evenly spread across a district — see South West Hampshire below for a concrete case."],
+        ["North Hampshire boundary", "Basingstoke and Deane + Hart + Rushmoor, whole districts. No parishes move in or out, so no population weighting is needed."],
+        ["South East Hampshire boundary", "Fareham + Gosport + Havant + Portsmouth, whole districts, plus the parishes moving in from Mid-Hampshire: 18.0% of East Hampshire (Clanfield, Horndean, Rowlands Castle) and 2.3% of Winchester (Newlands), by the same 2021 Census parish population share method."],
+        ["South West Hampshire boundary", "Eastleigh + Southampton, whole districts, plus the parishes moving in from Mid-Hampshire: 39.0% of New Forest (Totton and Eling, Marchwood, Hythe and Dibden, Fawley) and 11.2% of Test Valley (Chilworth, Nursling and Rownhams, Valley Park), by the same method. Note the concentration problem: Fawley (Esso's oil refinery) and Marchwood (the gas-fired power station) are together only around 11% of New Forest's population. The population split spreads that district's industrial energy consumption 61%/39% between Mid- and South West Hampshire, so a large share stays attributed to Mid-Hampshire even though the sites driving it sit in the parishes moving here."],
+        ["Isle of Wight, Portsmouth, Southampton", "Unaffected by the LGR decision as separate regions in their own right. The Isle of Wight stays a standalone unitary under the new structure too; Portsmouth and Southampton are absorbed into South East and South West Hampshire respectively from 1 April 2028, but their own figures here are simply today's DESNZ district totals."],
+        ["Hampshire and the Solent boundary", "Hampshire County Council + Portsmouth + Southampton + Isle of Wight, per the Hampshire and the Solent Combined County Authority Regulations 2026 (SI 2026/595). Hampshire CC isn't itself a DESNZ-reporting unit, so this is modelled as the sum of all 11 current Hampshire districts plus Portsmouth, Southampton and the Isle of Wight, using whole-district figures throughout. No parish-level adjustment is needed, since it doesn't matter which new unitary those parishes end up in — they stay inside Hampshire and the Solent either way. Equivalently, it's the sum of the four proposed unitaries plus the Isle of Wight, which this site's data pipeline checks against directly."],
+        ["Population / per-person", "DESNZ mid-year population estimates, included in the same dataset, summed the same way as emissions for each region — and scaled down per district for Mid-Hampshire, South East and South West Hampshire, as above."],
+        ["Update cycle", () => "DESNZ typically publishes new figures each summer, roughly 18–24 months behind the current year. This site's data was last refreshed " + formatIsoDate(DATA.meta.generated) + ", and is updated manually when a new release lands."],
+        ["Comparing to other published figures", "DESNZ revises prior years' figures on every release, not just the newest year, so a district's total for a given year can shift slightly between releases. A figure quoted elsewhere — a council webpage, a climate action plan — may be citing an earlier DESNZ release than this site uses. Check the release date before assuming a discrepancy is an error in either source."],
+        ["Energy data", "Renewable electricity generation by technology (2014–2024) and energy consumption by fuel (2005–2024), both from DESNZ at local authority level, aggregated to every region here the same way as the emissions figures. See [[generation-chart|Renewable electricity generation by technology]] and [[consumption-chart|Energy consumption by fuel]] for category grouping and unit conversions."],
+        ["Data & code", "Every figure traces back to the single published DESNZ CSV linked below, with the affected districts' contributions scaled using 2021 Census parish population shares. Nothing else here is estimated or modelled."]
       ],
       link: { href: "https://www.gov.uk/government/statistics/uk-local-authority-and-regional-greenhouse-gas-emissions-statistics-2005-to-2024/2005-to-2024-uk-local-and-regional-greenhouse-gas-emissions-statistical-release-web-accessible", label: "gov.uk statistical release" }
     }
   };
+
+  // Renders a body/dd string into `el`, turning any [[key|label]] marker into an inline button
+  // that opens that entry in this same dialog. Text either side is added as text nodes, so
+  // authored content still can't inject markup — the marker syntax is the only thing parsed.
+  const CROSS_REF = /\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g;
+
+  function renderRichText(el, str) {
+    let last = 0;
+    str.replace(CROSS_REF, (match, key, label, offset) => {
+      if (offset > last) el.appendChild(document.createTextNode(str.slice(last, offset)));
+      const btn = document.createElement("button");
+      btn.className = "info-link";
+      btn.type = "button";
+      btn.dataset.info = key;
+      btn.textContent = label;
+      el.appendChild(btn);
+      last = offset + match.length;
+      return match;
+    });
+    if (last < str.length) el.appendChild(document.createTextNode(str.slice(last)));
+  }
+
+  function appendParagraphs(body, value, className) {
+    const paragraphs = Array.isArray(value) ? value : [value];
+    paragraphs.filter(Boolean).forEach(text => {
+      const el = document.createElement("p");
+      if (className) el.className = className;
+      renderRichText(el, text);
+      body.appendChild(el);
+    });
+  }
 
   function openModal(key) {
     const info = INFO_CONTENT[key];
@@ -2574,29 +2635,22 @@
     const body = document.getElementById("modal-body");
     title.textContent = info.title;
     clearNode(body);
-    if (info.dynamicIntro) {
-      const intro = info.dynamicIntro();
-      const paragraphs = Array.isArray(intro) ? intro : [intro];
-      paragraphs.filter(Boolean).forEach(text => {
-        const introEl = document.createElement("p");
-        introEl.textContent = text;
-        body.appendChild(introEl);
-      });
-    }
-    (info.body || []).forEach(p => {
-      const pEl = document.createElement("p");
-      pEl.textContent = p;
-      body.appendChild(pEl);
-    });
+    if (info.dynamicIntro) appendParagraphs(body, info.dynamicIntro());
+    appendParagraphs(body, info.body || []);
     if (info.dl) {
       const dl = document.createElement("dl");
       info.dl.forEach(([dt, dd]) => {
         const dtEl = document.createElement("dt"); dtEl.textContent = dt;
-        const ddEl = document.createElement("dd"); ddEl.textContent = typeof dd === "function" ? dd() : dd;
+        const ddEl = document.createElement("dd");
+        renderRichText(ddEl, typeof dd === "function" ? dd() : dd);
         dl.appendChild(dtEl); dl.appendChild(ddEl);
       });
       body.appendChild(dl);
     }
+    // The fixed-scale setter note goes last, styled as an aside: it answers "why is the axis
+    // this high", which is precisely wrong as the first thing a general reader sees, and
+    // precisely what someone checking the chart against the raw data came here for.
+    if (info.dynamicOutro) appendParagraphs(body, info.dynamicOutro(), "modal-note");
     if (info.link) {
       const p = document.createElement("p");
       const a = document.createElement("a");
@@ -2605,6 +2659,7 @@
       p.appendChild(a);
       body.appendChild(p);
     }
+    body.scrollTop = 0;
     overlay.classList.remove("is-hidden");
   }
 
@@ -2805,8 +2860,12 @@
       });
     });
 
-    document.querySelectorAll(".info-btn, .link-btn[data-info]").forEach(btn => {
-      btn.addEventListener("click", () => openModal(btn.dataset.info));
+    // Delegated, not bound per-button at wire-up: the cross-reference buttons inside a dialog's
+    // own body ([[key|label]], see renderRichText) are created after this runs, every time a
+    // dialog opens, so a static querySelectorAll would never see them.
+    document.addEventListener("click", (ev) => {
+      const btn = ev.target.closest && ev.target.closest("[data-info]");
+      if (btn) openModal(btn.dataset.info);
     });
     document.getElementById("modal-close").addEventListener("click", closeModal);
     document.getElementById("modal-overlay").addEventListener("click", (ev) => {
