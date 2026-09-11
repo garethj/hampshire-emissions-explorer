@@ -35,7 +35,7 @@ data/fetch_source.py        downloads/updates data/emissions_source.csv from the
 data/process.py             turns the raw emissions CSV above into the two pre-processed emissions files above
 data/fetch_energy_source.py downloads/updates the two raw energy workbooks above from the current DESNZ releases
 data/process_energy.py      turns the raw energy workbooks above into the two pre-processed energy files above (requires the `openpyxl` package)
-data/tests/                 Python tests: la_config.py structure, pipeline fixture tests, and invariant checks against the committed data files — see "Running the tests" below
+data/tests/                 Python tests: la_config.py structure, pipeline fixture tests, invariant checks against the committed data files, and a check that the boundary figures quoted in the in-app "i" dialogs still match la_config.py — see "Running the tests" below
 tests/js/                   jsdom integration tests against the real index.html + app.js
 tests/playwright/           real-browser UI smoke suite (run manually, not part of the pre-commit gate)
 .githooks/pre-commit        the pre-commit test gate (opt in with `git config core.hooksPath .githooks`)
@@ -81,9 +81,11 @@ The site itself has no dependencies, but the test suite does — `npm install` o
 
 ```
 data/tests/            Python: la_config.py structure, pipeline fixture tests (process.py/process_energy.py
-                        run against tiny synthetic source files), and invariant checks against the committed
+                        run against tiny synthetic source files), invariant checks against the committed
                         mid_hampshire_emissions.json/mid_hampshire_energy.json (sector/gas/region sums,
-                        per-capita, GWP20 rescaling, suppression folding, cross-hierarchy consistency).
+                        per-capita, GWP20 rescaling, suppression folding, cross-hierarchy consistency), and
+                        a check that the parish names and population-share percentages quoted in the in-app
+                        "i" dialogs still match la_config.MOVING_PARISHES (test_info_dialog_boundaries.py).
                         Run: npm run test:data  (or python3 -m unittest discover -s data/tests -p "test_*.py")
 
 tests/js/               jsdom integration tests against the real index.html + app.js — drives every one of
