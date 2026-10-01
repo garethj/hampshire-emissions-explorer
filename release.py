@@ -113,7 +113,9 @@ def main():
     if run("git", "tag", "--list", version):
         sys.exit(f"Tag {version} already exists.")
 
-    notes = f"Hampshire Emissions Explorer {version}\n\n{commits}\n"
+    # The first release's "changes" would be the whole project history, so say what it is instead.
+    changes = commits if last else "First public release."
+    notes = f"Hampshire Emissions Explorer {version}\n\n{changes}\n"
     run("git", "tag", "-a", version, "-m", notes)
     zip_path, _ = package_site.package(version)
     rel_zip = zip_path.relative_to(ROOT)
