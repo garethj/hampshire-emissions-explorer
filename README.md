@@ -1,6 +1,6 @@
 # Hampshire Emissions Explorer
 
-A small, static, client-side dashboard comparing greenhouse gas emissions across every Hampshire local authority and every proposed future unitary — 20 regions in four tiers: the 11 historic districts and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) as they exist today; Hampshire, the county council area those 11 districts sit within (i.e. everything except Portsmouth, Southampton and Isle of Wight); the four unitary authorities that replace all 14 current districts/unitaries from 1 April 2028 (North Hampshire, Mid-Hampshire, South East Hampshire, South West Hampshire); and Hampshire and the Solent, the Combined County Authority sitting above all of them. Built for the Hampshire Local Government Reorganisation working group.
+A small, static, client-side dashboard comparing greenhouse gas emissions across every Hampshire local authority and every proposed future unitary — 20 regions in four tiers: the 11 historic districts and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) as they exist today; Hampshire, the county council area those 11 districts sit within (i.e. everything except Portsmouth, Southampton and Isle of Wight); the four unitary authorities that replace all 14 current districts/unitaries from 1 April 2028 (North Hampshire, Mid-Hampshire, South East Hampshire, South West Hampshire); and Hampshire and the Solent, the Combined County Authority sitting above all of them. Built for the Hampshire Local Government Reorganisation working group, and branded as a [WinACC](https://www.winacc.org.uk/) (Winchester Action on Climate Change) tool.
 
 Live site: hosted on GitHub Pages from this repo's `main` branch, `/` root.
 
@@ -23,6 +23,7 @@ refresh_data.py             checks DESNZ for new releases and regenerates the da
 index.html                 the whole app (dashboard + modal)
 assets/css/style.css       styling, incl. light/dark theme tokens
 assets/js/app.js           data loading, chart rendering (hand-rolled SVG), interactivity
+assets/img/                WinACC logo (winacc-logo.svg, unmodified from winacc.org.uk), its white-on-green header version, and the leaf-mark favicon
 data/mid_hampshire_emissions.json   pre-processed emissions data baked from the DESNZ CSV (reference copy, not loaded by the app)
 data/mid_hampshire_emissions.js     same data as above, wrapped as `window.MHE_DATA = {...}` so index.html can load it via <script> instead of fetch
 data/mid_hampshire_energy.json      pre-processed renewable generation (by technology) + energy consumption (by fuel and by sector) data (reference copy, not loaded by the app)
@@ -120,4 +121,4 @@ See [ROADMAP.md](ROADMAP.md) for a longer list of possible extensions.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Code: MIT — see [LICENSE](LICENSE). The WinACC name and logo (`assets/img/winacc-logo*.svg`, `assets/img/favicon.svg`) are WinACC's, used with permission, and aren't covered by the MIT licence. The DESNZ data is published under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).

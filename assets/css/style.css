@@ -3,6 +3,11 @@
   color-scheme: light;
   --brand: #0A6931;
   --brand-dark: #074f25;
+  --brand-deep: #002D32; /* WinACC's footer teal */
+  /* Links and other text-coloured accents use WinACC's teal rather than its green: green stays
+     for filled surfaces (header, active toggle, checkboxes). WinACC's orange accent is
+     deliberately unused — it's near-identical to --series-2, so it would read as chart data. */
+  --link: #006875;
   --surface-1: #fcfcfb;
   --page-plane: #f9f9f7;
   --text-primary: #0b0b0b;
@@ -38,6 +43,7 @@
     --baseline: #383835;
     --border: rgba(255,255,255,0.10);
     --success-text: #0ca30c;
+    --link: #50B9BE;
 
     --series-1: #3987e5;
     --series-2: #d95926;
@@ -60,6 +66,7 @@
   --baseline: #383835;
   --border: rgba(255,255,255,0.10);
   --success-text: #0ca30c;
+  --link: #50B9BE;
 
   --series-1: #3987e5;
   --series-2: #d95926;
@@ -84,7 +91,7 @@ body {
   line-height: 1.5;
 }
 h1, h2, h3 { font-family: "Roboto Slab", "Roboto", serif; font-weight: 700; margin: 0; }
-a { color: var(--brand); }
+a { color: var(--link); }
 :root[data-theme="dark"] a, @media (prefers-color-scheme: dark) { }
 .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
@@ -92,13 +99,24 @@ a { color: var(--brand); }
 .site-header { background: var(--brand); color: #fff; padding: 20px 0; }
 .header-row { display: flex; align-items: center; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.brand-mark { font-size: 2rem; line-height: 1; flex: none; }
+.brand-mark { flex: none; display: block; line-height: 0; }
+.brand-mark img { height: 48px; width: auto; display: block; }
 .brand-text { min-width: 0; }
 .brand-text h1 { font-size: 1.4rem; color: #fff; overflow-wrap: break-word; }
 .brand-sub { margin: 4px 0 0; font-size: 0.85rem; color: rgba(255,255,255,0.85); }
 .brand-sub a { color: #fff; text-decoration: underline; }
 
 main.wrap { padding-top: 24px; padding-bottom: 40px; }
+
+/* ---------- Footer & dev banner ---------- */
+/* One quiet line below the content: credit and source link only, nothing that competes with
+   the charts. Same deep teal as WinACC's own site footer, in both themes. */
+.site-footer { background: var(--brand-deep); color: rgba(255,255,255,0.85); padding: 14px 0; font-size: 0.82rem; }
+.site-footer a { color: #fff; }
+/* Shown only on the GitHub Pages development copy (see deploymentKind() in app.js). */
+.dev-banner { background: var(--brand-deep); color: #fff; font-size: 0.78rem; text-align: center; padding: 4px 16px; }
+.dev-banner a { color: #fff; }
+.dev-banner.is-hidden { display: none; }
 
 /* ---------- Region toggle ---------- */
 /* Sticks just below the control panel, but only stays stuck while its own section
@@ -149,7 +167,7 @@ main.wrap { padding-top: 24px; padding-bottom: 40px; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23898781' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 10px center;
 }
-#region-select:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+#region-select:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
 
 /* ---------- Control panel ---------- */
 /* Pinned to the very top of the viewport for the whole page (it governs every chart, not
@@ -186,7 +204,7 @@ body.horizon-gwp20 .card { border-top: 3px solid var(--series-2); }
   background: none; color: var(--text-muted); font: 600 12px/1 "Roboto", sans-serif;
   cursor: pointer; flex: none; display: inline-flex; align-items: center; justify-content: center;
 }
-.info-btn:hover, .info-btn:focus-visible { border-color: var(--brand); color: var(--brand); outline: none; }
+.info-btn:hover, .info-btn:focus-visible { border-color: var(--link); color: var(--link); outline: none; }
 
 /* ---------- Cards ---------- */
 /* scroll-margin-top keeps a card's own heading clear of the sticky stack above it (control panel
@@ -214,7 +232,7 @@ body.horizon-gwp20 .card { border-top: 3px solid var(--series-2); }
 
 /* ---------- Table toggle & table view ---------- */
 .table-toggle {
-  font: inherit; font-size: 0.82rem; color: var(--brand); background: none; border: none;
+  font: inherit; font-size: 0.82rem; color: var(--link); background: none; border: none;
   cursor: pointer; padding: 6px 0 0; text-decoration: underline;
 }
 .table-scroll { overflow-x: auto; margin-top: 10px; }
@@ -264,7 +282,7 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
 
 /* ---------- Footnote ---------- */
 .footnote { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-.link-btn { font: inherit; font-size: inherit; color: var(--brand); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+.link-btn { font: inherit; font-size: inherit; color: var(--link); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
 
 /* ---------- Modal ---------- */
 .modal-overlay {
@@ -289,7 +307,7 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
 #modal-body { overflow-y: auto; min-height: 0; padding: 0 26px 24px; }
 .modal p { font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 10px; }
 .modal p:last-child { margin-bottom: 0; }
-.modal a { color: var(--brand); }
+.modal a { color: var(--link); }
 .modal-close {
   flex: none; background: none; border: none; font-size: 1.4rem;
   line-height: 1; color: var(--text-muted); cursor: pointer; padding: 4px;
@@ -298,7 +316,7 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
 /* Inline cross-reference to another dialog entry ([[key|label]] in INFO_CONTENT). Styled as a
    link rather than a button so it reads as part of the sentence, not as a control. */
 .info-link {
-  font: inherit; color: var(--brand); background: none; border: none;
+  font: inherit; color: var(--link); background: none; border: none;
   cursor: pointer; text-decoration: underline; padding: 0; text-align: left;
 }
 .info-link:hover { text-decoration: none; }
@@ -310,7 +328,7 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
   font: inherit; font-size: 0.78rem; color: var(--text-muted); background: none;
   border: none; cursor: pointer; padding: 0 0 4px; display: block; text-align: left;
 }
-.modal-back:hover { color: var(--brand); }
+.modal-back:hover { color: var(--link); }
 .modal-back.is-hidden { display: none; }
 
 /* The three-part dialog: a summary everyone reads, bullets on reading the chart, then the method
@@ -339,7 +357,7 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
   content: "\25B8"; display: inline-block; width: 14px; transition: transform 0.15s ease;
 }
 .modal details.method-block[open] > summary::before { transform: rotate(90deg); }
-.modal details.method-block > summary:hover { color: var(--brand); }
+.modal details.method-block > summary:hover { color: var(--link); }
 
 .modal dl { margin: 0 0 4px; font-size: 0.85rem; }
 .modal dt { font-weight: 700; margin-top: 12px; color: var(--text-primary); }
