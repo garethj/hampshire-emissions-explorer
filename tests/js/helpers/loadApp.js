@@ -33,8 +33,10 @@ function buildInlinedHtml({ region } = {}) {
 
 // Loads the app in a fresh jsdom window and resolves once app.js's init() has run (i.e. after
 // DOMContentLoaded has fired) — mirrors a real page being ready for interaction.
-async function loadApp({ region } = {}) {
-  const url = region ? `http://localhost/?region=${encodeURIComponent(region)}` : "http://localhost/";
+// `base` sets the page's address, for tests of hostname-dependent behaviour (the dev banner shown
+// only on the GitHub Pages copy) — no request is made to it, since every script is inlined.
+async function loadApp({ region, base = "http://localhost/" } = {}) {
+  const url = region ? `${base}?region=${encodeURIComponent(region)}` : base;
   const dom = new JSDOM(buildInlinedHtml(), {
     url,
     runScripts: "dangerously",

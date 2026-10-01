@@ -3019,7 +3019,31 @@
     }
   }
 
+  // The GitHub Pages copy is the development version shared for feedback; the public version is
+  // a packaged release (package_site.py) copied to a separate host. Detected by hostname rather
+  // than a per-deploy config file, so both copies can be byte-identical. PUBLIC_URL stays empty
+  // until the public host is settled; once set, the dev banner links to it.
+  const PUBLIC_URL = "";
+
+  function deploymentKind(hostname) {
+    return /(^|\.)github\.io$/i.test(hostname || "") ? "dev" : "public";
+  }
+
+  function showDevBanner() {
+    if (deploymentKind(location.hostname) !== "dev") return;
+    const banner = document.getElementById("dev-banner");
+    if (PUBLIC_URL) {
+      banner.append(" ");
+      const link = document.createElement("a");
+      link.href = PUBLIC_URL;
+      link.textContent = "Go to the public version";
+      banner.append(link);
+    }
+    banner.classList.remove("is-hidden");
+  }
+
   function init() {
+    showDevBanner();
     if (!window.MHE_DATA) {
       document.getElementById("trend-chart").textContent = "Could not load emissions data: data/mid_hampshire_emissions.js did not load.";
       return;

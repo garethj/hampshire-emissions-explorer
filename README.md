@@ -2,7 +2,7 @@
 
 A small, static, client-side dashboard comparing greenhouse gas emissions across every Hampshire local authority and every proposed future unitary — 20 regions in four tiers: the 11 historic districts and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) as they exist today; Hampshire, the county council area those 11 districts sit within (i.e. everything except Portsmouth, Southampton and Isle of Wight); the four unitary authorities that replace all 14 current districts/unitaries from 1 April 2028 (North Hampshire, Mid-Hampshire, South East Hampshire, South West Hampshire); and Hampshire and the Solent, the Combined County Authority sitting above all of them. Built for the Hampshire Local Government Reorganisation working group, and branded as a [WinACC](https://www.winacc.org.uk/) (Winchester Action on Climate Change) tool.
 
-Live site: hosted on GitHub Pages from this repo's `main` branch, `/` root.
+Development version: hosted on GitHub Pages from this repo's `main` branch, `/` root, at <https://garethj.github.io/mid-hampshire-emissions/>. It shows a slim "Development version" banner (`deploymentKind()` in `app.js` recognises any `*.github.io` host); any other host shows no banner. Once the public host is known, set `PUBLIC_URL` in `app.js` and the banner links to it.
 
 ## What it is
 

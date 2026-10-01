@@ -1061,3 +1061,33 @@ test("following a cross-reference shows a breadcrumb back to where it came from"
   fireClick(window, doc.querySelector('[data-info="sector-chart"]'));
   assert.ok(back.classList.contains("is-hidden"), "closing the dialog should clear the trail");
 });
+
+test("the development banner shows on the GitHub Pages copy only", async () => {
+  const dev = await loadApp({ base: "https://garethj.github.io/mid-hampshire-emissions/" });
+  assert.ok(!dev.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
+    "the GitHub Pages copy is the development version and should say so");
+  assert.deepEqual(dev.errors, []);
+
+  for (const base of ["http://localhost/", "https://emissions.example.org/explorer/"]) {
+    const pub = await loadApp({ base });
+    assert.ok(pub.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
+      `no dev banner expected at ${base}`);
+  }
+});
+
+test("WinACC branding: header logo and footer credit link out, alongside the source code", async () => {
+  const dom = await loadApp();
+  const doc = dom.window.document;
+  const logoLink = doc.querySelector(".site-header a.brand-mark");
+  assert.equal(logoLink.getAttribute("href"), "https://www.winacc.org.uk/");
+  assert.equal(logoLink.querySelector("img").getAttribute("alt"), "WinACC");
+
+  const footerLinks = [...doc.querySelectorAll(".site-footer a")].map(a => [a.textContent, a.getAttribute("href")]);
+  assert.deepEqual(footerLinks, [
+    ["WinACC", "https://www.winacc.org.uk/"],
+    ["Source code", "https://github.com/garethj/mid-hampshire-emissions"],
+  ]);
+  // DESNZ data is published under the OGL, which requires this attribution wherever it's reused.
+  assert.match(doc.querySelector(".footnote").textContent,
+    /Contains public sector information licensed under the Open Government Licence v3\.0/);
+});
