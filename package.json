@@ -1,5 +1,5 @@
 {
-  "name": "mid-hampshire-emissions-tests",
+  "name": "hampshire-emissions-explorer-tests",
   "private": true,
   "description": "Dev-only test tooling for the Hampshire Emissions Explorer. The site itself has no build step or dependencies — this package.json exists purely so the test suite (jsdom integration tests + Playwright UI smoke tests) has somewhere to declare its own dependencies.",
   "scripts": {

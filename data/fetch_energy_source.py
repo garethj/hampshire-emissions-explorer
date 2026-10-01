@@ -4,7 +4,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-USER_AGENT = "mid-hampshire-emissions-fetch/1.0 (+https://github.com/garethj/mid-hampshire-emissions)"
+USER_AGENT = "hampshire-emissions-explorer-fetch/1.0 (+https://github.com/garethj/hampshire-emissions-explorer)"
 DATA_DIR = Path(__file__).resolve().parent
 
 # Unlike the emissions collection, this page is updated in place each year rather than getting a

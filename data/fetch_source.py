@@ -8,7 +8,7 @@ from pathlib import Path
 # than updating the previous year's page in place — so finding "the latest data" means finding
 # the newest release page, not polling a fixed URL.
 COLLECTION_URL = "https://www.gov.uk/government/collections/uk-local-authority-and-regional-greenhouse-gas-emissions-statistics"
-USER_AGENT = "mid-hampshire-emissions-fetch/1.0 (+https://github.com/garethj/mid-hampshire-emissions)"
+USER_AGENT = "hampshire-emissions-explorer-fetch/1.0 (+https://github.com/garethj/hampshire-emissions-explorer)"
 DEST = Path(__file__).resolve().parent / "emissions_source.csv"
 
 # Matches every past release page linked from the collection, across the naming conventions

@@ -1063,7 +1063,7 @@ test("following a cross-reference shows a breadcrumb back to where it came from"
 });
 
 test("the development banner shows on the GitHub Pages copy only", async () => {
-  const dev = await loadApp({ base: "https://garethj.github.io/mid-hampshire-emissions/" });
+  const dev = await loadApp({ base: "https://garethj.github.io/hampshire-emissions-explorer/" });
   assert.ok(!dev.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
     "the GitHub Pages copy is the development version and should say so");
   assert.deepEqual(dev.errors, []);
@@ -1086,7 +1086,7 @@ test("WinACC branding: header logo and footer credit link out, alongside the sou
   assert.deepEqual(footerLinks, [
     ["Open Government Licence v3.0", "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"],
     ["WinACC", "https://www.winacc.org.uk/"],
-    ["Source code", "https://github.com/garethj/mid-hampshire-emissions"],
+    ["Source code", "https://github.com/garethj/hampshire-emissions-explorer"],
   ]);
 
   // DESNZ data is published under the OGL, whose attribution can be included or linked to: the

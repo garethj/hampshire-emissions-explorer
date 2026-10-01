@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 DIST = ROOT / "dist"
 FOLDER = "hampshire-emissions-explorer"
-REPO_URL = "https://github.com/garethj/mid-hampshire-emissions"
+REPO_URL = "https://github.com/garethj/hampshire-emissions-explorer"
 
 # An allowlist rather than a list of exclusions, so a new script, test or source file can never
 # reach the public site by accident. Anything the page loads must be covered here —
