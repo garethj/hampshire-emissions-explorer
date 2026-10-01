@@ -19,6 +19,7 @@ Development version: hosted on GitHub Pages from this repo's `main` branch, `/` 
 ## Structure
 
 ```
+package_site.py             packages just the site files into a zip for the public host — see "Publishing a release to the public host" below
 refresh_data.py             checks DESNZ for new releases and regenerates the data files below if there are any — see "Updating the data for a new year" below
 index.html                 the whole app (dashboard + modal)
 assets/css/style.css       styling, incl. light/dark theme tokens
@@ -72,13 +73,26 @@ Under the hood, for whichever dataset changed:
 
 Then commit whichever of the four output files `refresh_data.py` reports as regenerated (not the raw source files, which stay gitignored). No other changes needed — the app reads whatever years/sectors/technologies are in the files.
 
+## Publishing a release to the public host
+
+The public version is a copy of the site on a separate host; GitHub Pages stays the development version. To make a release, tag the commit and package it:
+
+```
+git tag v1.0
+python3 package_site.py v1.0
+```
+
+This writes `dist/hampshire-emissions-explorer-v1.0.zip` (gitignored), containing only what the browser loads: `index.html`, `assets/`, and the two `data/*.js` files. The scripts, tests, raw data and docs are left out. Files come from the tagged commit, not the working tree, so uncommitted edits never end up in a release. Unzip it onto the host as is: every path is relative, so it works at a domain root or in a sub-folder. To hand the zip to whoever runs the host, attach it to a GitHub Release for that tag.
+
+Without a tag argument it packages `HEAD`, named after the nearest tag (e.g. `v1.0-3-gabc1234`), which is useful for a trial upload. The file list is an allowlist (`SITE_FILES`/`SITE_DIRS` in `package_site.py`), so a new file the page loads must be added there; `tests/py/test_package_site.py` fails if `index.html` or `style.css` references anything the allowlist would leave out.
+
 ## Local development
 
 No build step, no server. Just open `index.html` directly in a browser (double-click it, or `open index.html`). Data loads via a `<script>` tag rather than `fetch`, so it works straight from disk (`file://`) — Chrome and other browsers block `fetch` of local files as a NetworkError, which a plain script tag isn't subject to.
 
 ## Running the tests
 
-The site itself has no dependencies, but the test suite does — `npm install` once to pull them in (see `package.json`; nothing here affects the shipped site). Three tiers, of increasing cost:
+The site itself has no dependencies, but the test suite does — `npm install` once to pull them in (see `package.json`; nothing here affects the shipped site). Four tiers, of increasing cost:
 
 ```
 data/tests/            Python: la_config.py structure, pipeline fixture tests (process.py/process_energy.py
@@ -88,6 +102,10 @@ data/tests/            Python: la_config.py structure, pipeline fixture tests (p
                         a check that the parish names and population-share percentages quoted in the in-app
                         "i" dialogs still match la_config.MOVING_PARISHES (test_info_dialog_boundaries.py).
                         Run: npm run test:data  (or python3 -m unittest discover -s data/tests -p "test_*.py")
+
+tests/py/               Python: checks package_site.py's allowlist includes every file index.html and style.css
+                        load, and nothing outside the site (scripts, tests, raw data, docs).
+                        Run: npm run test:py
 
 tests/js/               jsdom integration tests against the real index.html + app.js — drives every one of
                         the 20 regions through every metric/view/horizon combination (checking nothing
@@ -99,7 +117,7 @@ tests/playwright/       A small real-browser smoke suite (rendering, CSS show/hi
                         manually as needed: npm run test:ui  (first time: npx playwright install chromium)
 ```
 
-`npm test` runs the first two tiers together — the same ones a pre-commit hook runs. To have git run them automatically before every commit: `git config core.hooksPath .githooks` (one-time, local to your checkout; see `.githooks/pre-commit`).
+`npm test` runs the first three tiers together — the same ones a pre-commit hook runs. To have git run them automatically before every commit: `git config core.hooksPath .githooks` (one-time, local to your checkout; see `.githooks/pre-commit`).
 
 ## Known limitations
 

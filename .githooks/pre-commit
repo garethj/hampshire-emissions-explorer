@@ -12,5 +12,8 @@ cd "$(git rev-parse --show-toplevel)"
 echo "Running data validation tests..."
 python3 -m unittest discover -s data/tests -p "test_*.py"
 
+echo "Running site packaging tests..."
+python3 -m unittest discover -s tests/py -p "test_*.py"
+
 echo "Running app.js integration tests..."
 node --test "tests/js/**/*.test.js"

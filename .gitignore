@@ -5,6 +5,7 @@ data/energy_consumption_source.xlsx
 data/dukes_source.xlsx
 node_modules/
 test-results/
+dist/
 playwright-report/
 __pycache__/
 *.pyc
