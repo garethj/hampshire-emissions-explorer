@@ -46,3 +46,18 @@ class PackageSiteTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StampVersionTest(unittest.TestCase):
+    def test_index_html_has_exactly_one_version_marker(self):
+        # Otherwise stamp_version raises, and a release can't be packaged.
+        self.assertEqual((ROOT / "index.html").read_text().count(package_site.VERSION_MARKER), 1)
+
+    def test_tagged_release_links_to_its_release_notes(self):
+        page = package_site.stamp_version(f"x {package_site.VERSION_MARKER} y", "v1.2.0", True)
+        self.assertIn(f'<a href="{package_site.REPO_URL}/releases/tag/v1.2.0">v1.2.0</a>', page)
+        self.assertNotIn(package_site.VERSION_MARKER, page)
+
+    def test_untagged_build_shows_plain_version(self):
+        page = package_site.stamp_version(package_site.VERSION_MARKER, "v1.2.0-3-gabc1234", False)
+        self.assertEqual(page, "&middot; v1.2.0-3-gabc1234")

@@ -19,7 +19,8 @@ Development version: hosted on GitHub Pages from this repo's `main` branch, `/` 
 ## Structure
 
 ```
-package_site.py             packages just the site files into a zip for the public host — see "Publishing a release to the public host" below
+release.py                  tags a new version and builds its zip for the public host — see "Publishing a release to the public host" below
+package_site.py             packages just the site files into a zip (used by release.py)
 refresh_data.py             checks DESNZ for new releases and regenerates the data files below if there are any — see "Updating the data for a new year" below
 index.html                 the whole app (dashboard + modal)
 assets/css/style.css       styling, incl. light/dark theme tokens
@@ -75,16 +76,17 @@ Then commit whichever of the four output files `refresh_data.py` reports as rege
 
 ## Publishing a release to the public host
 
-The public version is a copy of the site on a separate host; GitHub Pages stays the development version. To make a release, tag the commit and package it:
+The public version is a copy of the site on a separate host; GitHub Pages stays the development version. To make a release, from a clean `main`:
 
 ```
-git tag v1.0
-python3 package_site.py v1.0
+python3 release.py
 ```
 
-This writes `dist/hampshire-emissions-explorer-v1.0.zip` (gitignored), containing only what the browser loads: `index.html`, `assets/`, and the two `data/*.js` files. The scripts, tests, raw data and docs are left out. Files come from the tagged commit, not the working tree, so uncommitted edits never end up in a release. Unzip it onto the host as is: every path is relative, so it works at a domain root or in a sub-folder. To hand the zip to whoever runs the host, attach it to a GitHub Release for that tag.
+It runs the fast tests, lists the commits since the last release, and proposes the next version. Press Enter to accept it, or type your own (`v2.0.0`), or `major` / `minor` / `patch`. Versions are `vMAJOR.MINOR.PATCH`: major for a change that breaks how people use or link to the site (e.g. different geography, changed `?region=` keys), minor for new features or a new year of DESNZ data (the default proposal), patch for fixes and wording. It then creates an annotated git tag, with the commit list as release notes, and builds `dist/hampshire-emissions-explorer-<version>.zip` (gitignored). Finally it asks before pushing the tag and creating a GitHub Release with the zip attached (needs the `gh` CLI). Answer no to keep it all local; it prints the commands to publish later, or to delete the tag.
 
-Without a tag argument it packages `HEAD`, named after the nearest tag (e.g. `v1.0-3-gabc1234`), which is useful for a trial upload. The file list is an allowlist (`SITE_FILES`/`SITE_DIRS` in `package_site.py`), so a new file the page loads must be added there; `tests/py/test_package_site.py` fails if `index.html` or `style.css` references anything the allowlist would leave out.
+The zip contains only what the browser loads: `index.html`, `assets/`, and the two `data/*.js` files. The scripts, tests, raw data and docs are left out. Files come from the tagged commit, not the working tree. Unzip it onto the host as is: every path is relative, so it works at a domain root or in a sub-folder. The packaged `index.html` has the version stamped into its footer (replacing `<!-- site-version -->`), linked to that version's GitHub Release notes. The repo's own `index.html`, which GitHub Pages serves, shows no version, since it's always the latest commit.
+
+`python3 package_site.py [ref]` builds the zip alone for any tag, branch or commit, without tagging, which is useful for a trial upload. The file list is an allowlist (`SITE_FILES`/`SITE_DIRS` in `package_site.py`), so a new file the page loads must be added there; `tests/py/test_package_site.py` fails if `index.html` or `style.css` references anything the allowlist would leave out.
 
 ## Local development
 
@@ -104,7 +106,8 @@ data/tests/            Python: la_config.py structure, pipeline fixture tests (p
                         Run: npm run test:data  (or python3 -m unittest discover -s data/tests -p "test_*.py")
 
 tests/py/               Python: checks package_site.py's allowlist includes every file index.html and style.css
-                        load, and nothing outside the site (scripts, tests, raw data, docs).
+                        load and nothing outside the site, the footer version stamp, and release.py's
+                        version proposal and validation.
                         Run: npm run test:py
 
 tests/js/               jsdom integration tests against the real index.html + app.js — drives every one of
