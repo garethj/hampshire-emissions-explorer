@@ -1084,10 +1084,15 @@ test("WinACC branding: header logo and footer credit link out, alongside the sou
 
   const footerLinks = [...doc.querySelectorAll(".site-footer a")].map(a => [a.textContent, a.getAttribute("href")]);
   assert.deepEqual(footerLinks, [
+    ["Open Government Licence v3.0", "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"],
     ["WinACC", "https://www.winacc.org.uk/"],
     ["Source code", "https://github.com/garethj/mid-hampshire-emissions"],
   ]);
-  // DESNZ data is published under the OGL, which requires this attribution wherever it's reused.
-  assert.match(doc.querySelector(".footnote").textContent,
-    /Contains public sector information licensed under the Open Government Licence v3\.0/);
+
+  // DESNZ data is published under the OGL, whose attribution can be included or linked to: the
+  // footer names the source and licence, and links to the methodology dialog holding the full
+  // statement.
+  fireClick(dom.window, doc.querySelector('.site-footer [data-info="general-methodology"]'));
+  assert.match(doc.getElementById("modal-body").textContent,
+    /Contains public sector information licensed under the Open Government Licence v3\.0\./);
 });

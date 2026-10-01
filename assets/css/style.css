@@ -109,10 +109,14 @@ a { color: var(--link); }
 main.wrap { padding-top: 24px; padding-bottom: 40px; }
 
 /* ---------- Footer & dev banner ---------- */
-/* One quiet line below the content: credit and source link only, nothing that competes with
-   the charts. Same deep teal as WinACC's own site footer, in both themes. */
-.site-footer { background: var(--brand-deep); color: rgba(255,255,255,0.85); padding: 14px 0; font-size: 0.82rem; }
-.site-footer a { color: #fff; }
+/* Two quiet lines below the content: the data credit (with the OGL licence link and the full
+   attribution statement one click away in the methodology dialog), then the WinACC credit, source
+   link and, in a packaged release, its version. Same deep teal as WinACC's own site footer, in
+   both themes. */
+.site-footer { background: var(--brand-deep); color: rgba(255,255,255,0.85); padding: 14px 0; font-size: 0.82rem; margin-top: 8px; }
+.site-footer p { margin: 0; }
+.site-footer p + p { margin-top: 4px; }
+.site-footer a, .site-footer .link-btn { color: #fff; }
 /* Shown only on the GitHub Pages development copy (see deploymentKind() in app.js). */
 .dev-banner { background: var(--brand-deep); color: #fff; font-size: 0.78rem; text-align: center; padding: 4px 16px; }
 .dev-banner a { color: #fff; }
@@ -281,7 +285,6 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
 .viz-tooltip .tt-subrow .tt-val { font-weight: 500; color: var(--text-secondary); }
 
 /* ---------- Footnote ---------- */
-.footnote { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
 .link-btn { font: inherit; font-size: inherit; color: var(--link); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
 
 /* ---------- Modal ---------- */
