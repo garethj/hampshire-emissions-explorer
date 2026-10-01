@@ -226,3 +226,15 @@ test("a card's own heading clears the sticky bars above it when scrolled to dire
   });
   expect(overlap, "generation chart title should clear all three sticky bars, including the energy unit row").toBe(false);
 });
+
+for (const colorScheme of ["light", "dark"]) {
+  test(`WinACC logo image loads and the footer shows, in ${colorScheme} mode`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto("index.html");
+    const logo = page.locator(".site-header .brand-mark img");
+    await expect(logo).toBeVisible();
+    expect(await logo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(page.locator(".site-footer")).toContainText("Created by WinACC");
+    await expect(page.locator("#dev-banner")).toBeHidden();
+  });
+}
