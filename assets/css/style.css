@@ -202,6 +202,17 @@ main.wrap { padding-top: 24px; padding-bottom: 40px; }
 .horizon-banner strong { color: var(--series-2); }
 body.horizon-gwp20 .card { border-top: 3px solid var(--series-2); }
 
+/* "Provisional boundaries" chip beside the region select, shown only while a proposed unitary is
+   selected (syncProvisionalChip in app.js). Opens the "Choosing a region" dialog, where the LGR
+   status lives. Delete it once the Government confirms the new unitary boundaries. */
+.status-chip {
+  font: inherit; font-size: 0.82rem; font-weight: 500; white-space: nowrap; flex: none;
+  padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  background: none; color: var(--text-secondary); border: 1px dashed var(--text-muted);
+}
+.status-chip:hover, .status-chip:focus-visible { border-color: var(--link); color: var(--link); outline: none; }
+.status-chip.is-hidden { display: none; }
+
 /* ---------- Info button ---------- */
 .info-btn {
   width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--text-muted);
@@ -380,4 +391,8 @@ table.data-table thead th { color: var(--text-secondary); font-weight: 700; bord
   .control-group { flex: none; }
   .control-panel .seg-btn { padding: 7px 12px; font-size: 0.88rem; }
   #region-select { padding: 7px 30px 7px 10px; font-size: 0.88rem; }
+  /* Keep the select readable when the provisional chip shares the row; the row scrolls instead. */
+  .region-select-wrap { min-width: 170px; }
+  .status-chip { font-size: 0.78rem; padding: 3px 8px; }
+  .status-chip .chip-extra { display: none; }
 }

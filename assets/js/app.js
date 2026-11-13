@@ -56,7 +56,7 @@
 
   // Every region this site can show — built from DATA.meta.region_index (see region_index in
   // process.py) once data loads, rather than hardcoded here, since there are 20 of them across
-  // four tiers (historic districts / current unitaries / Hampshire, the county / proposed 2028
+  // four tiers (historic districts / current unitaries / Hampshire, the county / proposed
   // unitaries) plus Hampshire and the Solent itself. Populated by initRegions() in init(). `group`
   // and `parent` drive the dropdown grouping and the context-chart hierarchy helpers just below.
   let REGIONS = [];
@@ -67,7 +67,7 @@
     REGIONS = DATA.meta.region_index.map(r => ({
       key: r.key,
       label: r.name,
-      legendLabel: r.group === "proposed-unitary" ? r.name + " (proposed)" : r.name,
+      legendLabel: r.group === "proposed-unitary" ? r.name + " (provisional)" : r.name,
       group: r.group,
       parent: r.parent
     }));
@@ -176,7 +176,7 @@
     "historic-district": "Historic districts",
     "current-unitary": "Current unitaries",
     "county": "Hampshire (county)",
-    "proposed-unitary": "Proposed unitaries (2028)"
+    "proposed-unitary": "Proposed unitaries (provisional)"
   };
   // "county" (Hampshire) sits directly after "current-unitary" so it reads as grouped with
   // Portsmouth/Southampton/Isle of Wight in the list, even though it's a separate fixed-scale tier
@@ -2460,20 +2460,21 @@
   const INFO_CONTENT = {
     "region-toggle": {
       title: "Choosing a region",
-      summary: "Every current Hampshire local authority and every proposed 2028 unitary, in three groups.",
+      summary: "Every current Hampshire local authority, the Combined County Authority above them, and the four unitaries proposed to replace them.",
       readIt: [
         "\"Historic districts\" are the 11 district and borough councils that exist today, under Hampshire County Council's two-tier system.",
         "\"Current unitaries\" are Portsmouth, Southampton and the Isle of Wight, each already covering only its own area.",
-        "\"Proposed unitaries (2028)\" are the four new authorities that replace all 14 of the above from 1 April 2028.",
-        "\"Hampshire and the Solent\" is the Combined County Authority sitting above all of them — and, unlike the four new unitaries, it already exists."
+        "\"Proposed unitaries (provisional)\" are the four authorities the Government chose in March 2026 to replace all 14 of the above. It has since withdrawn that decision to review it, so treat their figures as provisional until it decides again, expected early 2027.",
+        "\"Hampshire and the Solent\" is the Combined County Authority above all of them. It already exists, and its figures don't depend on how the reorganisation is decided."
       ],
       method: [
-        ["The reorganisation", "Under the Government's Local Government Reorganisation (LGR) decision of 25 March 2026, the 11 districts and 3 current unitaries are replaced from 1 April 2028 by North Hampshire, Mid-Hampshire, South East Hampshire and South West Hampshire. The Isle of Wight is unaffected and stays exactly as it is. Portsmouth and Southampton don't remain standalone: Portsmouth is absorbed into South East Hampshire, Southampton into South West Hampshire."],
-        ["Parishes that move", "Three of the four new unitaries also gain parishes moving out of a Mid-Hampshire district. South East Hampshire gains Clanfield, Horndean and Rowlands Castle from East Hampshire, and Newlands from Winchester. South West Hampshire gains Totton and Eling, Marchwood, Hythe and Dibden and Fawley from New Forest, and Chilworth, Nursling and Rownhams and Valley Park from Test Valley."],
+        ["The reorganisation", "In March 2026 the Government decided to replace the 11 districts and 3 current unitaries with four mainland unitaries: North Hampshire, Mid-Hampshire, South East Hampshire and South West Hampshire. Portsmouth would join South East Hampshire and Southampton would join South West Hampshire. The Isle of Wight would stay as it is. The proposed unitaries here follow that decision, because it's the only structure the Government has chosen so far."],
+        ["Parishes that move", "Under the March 2026 decision, three of the four new unitaries would also gain parishes moving out of a Mid-Hampshire district. South East Hampshire would gain Clanfield, Horndean and Rowlands Castle from East Hampshire, and Newlands from Winchester. South West Hampshire would gain Totton and Eling, Marchwood, Hythe and Dibden and Fawley from New Forest, and Chilworth, Nursling and Rownhams and Valley Park from Test Valley."],
         ["Calculated here", "No official sub-district emissions data exists, so each affected district's contribution is apportioned by 2021 Census parish population share rather than left as a whole-district guess. [[general-methodology|Full methodology & sources]] gives the exact fractions, and where the method is weakest."],
         ["Hampshire and the Solent", "The Combined County Authority established 4 June 2026 (SI 2026/595), covering the whole of Hampshire plus Portsmouth, Southampton and the Isle of Wight. Its footprint doesn't depend on where any moving parish ends up, since they all stay inside it either way."],
         ["What districts show", "Historic districts and current unitaries always show today's whole-district figures, never an LGR-adjusted fragment — even where one of them also contributes a population-weighted slice to a neighbouring proposed unitary's total."],
-        ["Caveat", "The new-unitary decision is subject to a judicial review sought by Hampshire County Council, so these boundaries are the current best information, not guaranteed final."]
+        ["Current status", "On 7 September 2026 the Government withdrew the March decision following updated legal advice, while Hampshire County Council was seeking a judicial review. On 29 October 2026 it said all options and proposals remain under consideration, with an outcome by early 2027, shadow council elections in May 2028 and new councils from 2029. May 2027 elections go ahead on existing council boundaries. Once the Government decides, the proposed unitaries here will be recalculated to match. The historic districts, current unitaries, Hampshire and Hampshire and the Solent won't change."],
+        ["Source", "Ministry of Housing, Communities and Local Government, “Local government reorganisation moves forward in five counties”, 29 October 2026; Minister for Local Government's withdrawal letter to council leaders, 7 September 2026."]
       ]
     },
     "metric-toggle": {
@@ -2638,12 +2639,12 @@
         ["Basis", "Territorial emissions — what physically happens within the area's boundary — in kt CO2e (thousand tonnes carbon dioxide equivalent), combining CO2, methane (CH4) and nitrous oxide (N2O)."],
         ["Time horizon", "The default \"100-year\" view is DESNZ's own published figures, weighting CH4 and N2O by their 100-year Global Warming Potential (IPCC AR5: CH4 = 28, N2O = 265, CO2 = 1). The \"20-year\" view is calculated by this site, not DESNZ, by reweighting the same gas quantities using GWP20. See [[horizon-toggle|100-year vs 20-year time horizon]]."],
         ["Historic districts & current unitaries", "The 11 historic districts (Basingstoke and Deane, East Hampshire, Eastleigh, Fareham, Gosport, Hart, Havant, New Forest, Rushmoor, Test Valley, Winchester) and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) are DESNZ's own published district figures, used whole and unadjusted. Each represents the area as it exists today, not an LGR-adjusted fragment."],
-        ["Mid-Hampshire boundary", "East Hampshire + Winchester + New Forest + Test Valley, per the Government's LGR decision of 25 March 2026, each scaled down to exclude the parishes moving to South East and South West Hampshire under the same decision. No official sub-district emissions data exists, so each district's contribution is reduced by its 2021 Census parish population share instead: East Hampshire to 82.0%, Winchester to 97.7%, New Forest to 61.0%, Test Valley to 88.8%. Decision subject to possible judicial review."],
+        ["Mid-Hampshire boundary", "East Hampshire + Winchester + New Forest + Test Valley, per the Government's March 2026 decision, now withdrawn and under review (see [[region-toggle|Choosing a region]]), each scaled down to exclude the parishes moving to South East and South West Hampshire under the same decision. No official sub-district emissions data exists, so each district's contribution is reduced by its 2021 Census parish population share instead: East Hampshire to 82.0%, Winchester to 97.7%, New Forest to 61.0%, Test Valley to 88.8%."],
         ["Limits of the population split", "Apportioning by population assumes every category is spread proportionally to population. That understates the share moving out for anything geographically concentrated rather than evenly spread across a district — see South West Hampshire below for a concrete case."],
         ["North Hampshire boundary", "Basingstoke and Deane + Hart + Rushmoor, whole districts. No parishes move in or out, so no population weighting is needed."],
         ["South East Hampshire boundary", "Fareham + Gosport + Havant + Portsmouth, whole districts, plus the parishes moving in from Mid-Hampshire: 18.0% of East Hampshire (Clanfield, Horndean, Rowlands Castle) and 2.3% of Winchester (Newlands), by the same 2021 Census parish population share method."],
         ["South West Hampshire boundary", "Eastleigh + Southampton, whole districts, plus the parishes moving in from Mid-Hampshire: 39.0% of New Forest (Totton and Eling, Marchwood, Hythe and Dibden, Fawley) and 11.2% of Test Valley (Chilworth, Nursling and Rownhams, Valley Park), by the same method. Note the concentration problem: Fawley (Esso's oil refinery) and Marchwood (the gas-fired power station) are together only around 11% of New Forest's population. The population split spreads that district's industrial energy consumption 61%/39% between Mid- and South West Hampshire, so a large share stays attributed to Mid-Hampshire even though the sites driving it sit in the parishes moving here."],
-        ["Isle of Wight, Portsmouth, Southampton", "Unaffected by the LGR decision as separate regions in their own right. The Isle of Wight stays a standalone unitary under the new structure too; Portsmouth and Southampton are absorbed into South East and South West Hampshire respectively from 1 April 2028, but their own figures here are simply today's DESNZ district totals."],
+        ["Isle of Wight, Portsmouth, Southampton", "Unaffected by the LGR decision as separate regions in their own right. The Isle of Wight stays a standalone unitary under the new structure too; Portsmouth and Southampton would be absorbed into South East and South West Hampshire respectively under the March 2026 decision, but their own figures here are simply today's DESNZ district totals."],
         ["Hampshire and the Solent boundary", "Hampshire County Council + Portsmouth + Southampton + Isle of Wight, per the Hampshire and the Solent Combined County Authority Regulations 2026 (SI 2026/595). Hampshire CC isn't itself a DESNZ-reporting unit, so this is modelled as the sum of all 11 current Hampshire districts plus Portsmouth, Southampton and the Isle of Wight, using whole-district figures throughout. No parish-level adjustment is needed, since it doesn't matter which new unitary those parishes end up in — they stay inside Hampshire and the Solent either way. Equivalently, it's the sum of the four proposed unitaries plus the Isle of Wight, which this site's data pipeline checks against directly."],
         ["Population / per-person", "DESNZ mid-year population estimates, included in the same dataset, summed the same way as emissions for each region — and scaled down per district for Mid-Hampshire, South East and South West Hampshire, as above."],
         ["Update cycle", () => "DESNZ typically publishes new figures each summer, roughly 18–24 months behind the current year. This site's data was last refreshed " + formatIsoDate(DATA.meta.generated) + ", and is updated manually when a new release lands."],
@@ -2855,10 +2856,19 @@
     history.replaceState(null, "", url.pathname + url.search + url.hash);
   }
 
+  // The four proposed unitaries follow the Government's March 2026 LGR decision, which it withdrew
+  // on 7 September 2026 pending a fresh decision (expected early 2027) — so selecting one shows a
+  // "Provisional boundaries" chip that opens the "Choosing a region" dialog explaining why.
+  function syncProvisionalChip() {
+    const chip = document.getElementById("provisional-chip");
+    if (chip) chip.classList.toggle("is-hidden", REGION_BY_KEY[currentRegion].group !== "proposed-unitary");
+  }
+
   function setRegion(regionKey) {
     currentRegion = regionKey;
     compareMode = "context";
     document.getElementById("region-select").value = regionKey;
+    syncProvisionalChip();
     const compareToggle = document.getElementById("compare-constituents-toggle");
     if (compareToggle) compareToggle.checked = false;
     syncUrl(regionKey);
@@ -3060,6 +3070,7 @@
     const regionParam = new URLSearchParams(location.search).get("region");
     currentRegion = (regionParam && REGION_BY_KEY[regionParam]) ? regionParam : "winchester";
     document.getElementById("region-select").value = currentRegion;
+    syncProvisionalChip();
     renderPageWideCharts();
   }
 

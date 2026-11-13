@@ -1096,3 +1096,41 @@ test("WinACC branding: header logo and footer credit link out, alongside the sou
   assert.match(doc.getElementById("modal-body").textContent,
     /Contains public sector information licensed under the Open Government Licence v3\.0\./);
 });
+
+test("the 'Provisional boundaries' chip shows only while a proposed unitary is selected, and opens the region dialog", async () => {
+  // The four proposed unitaries follow a withdrawn LGR decision, so they must be flagged as
+  // provisional wherever they're the selected region — and only there, so districts and the
+  // Combined County Authority (whose figures won't change) don't carry a warning they don't need.
+  const dom = await loadApp({ region: "mid-hampshire" });
+  const { window } = dom;
+  const doc = window.document;
+  const chip = doc.getElementById("provisional-chip");
+  const sel = doc.getElementById("region-select");
+  const groupOf = Object.fromEntries(getData(window).DATA.meta.region_index.map(r => [r.key, r.group]));
+
+  assert.ok(!chip.classList.contains("is-hidden"), "chip should show on a deep link to a proposed unitary");
+  Object.keys(groupOf).forEach(key => {
+    sel.value = key;
+    fireChange(window, sel);
+    assert.equal(chip.classList.contains("is-hidden"), groupOf[key] !== "proposed-unitary",
+      `chip visibility is wrong for ${key} (${groupOf[key]})`);
+  });
+
+  sel.value = "south-west-hampshire";
+  fireChange(window, sel);
+  fireClick(window, chip);
+  assert.equal(doc.getElementById("modal-title").textContent, "Choosing a region");
+  assert.match(doc.getElementById("modal-body").textContent, /early 2027/);
+});
+
+test("proposed unitaries are labelled provisional in the region select and chart legends", async () => {
+  const dom = await loadApp({ region: "eastleigh" });
+  const { window } = dom;
+  const doc = window.document;
+  const groups = Array.from(doc.querySelectorAll("#region-select optgroup")).map(g => g.label);
+  assert.ok(groups.includes("Proposed unitaries (provisional)"), `optgroups were: ${groups.join(", ")}`);
+  // Eastleigh's default context view puts its proposed unitary on the trend chart unasked; the
+  // historical line view is the one with a legend.
+  fireClick(window, doc.querySelector('[data-view="historical"]'));
+  assert.match(doc.getElementById("trend-chart").parentElement.textContent, /South West Hampshire \(provisional\)/);
+});

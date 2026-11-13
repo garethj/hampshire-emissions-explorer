@@ -26,7 +26,8 @@ HAMPSHIRE_LAS = [
 
 # 2021 Census parish population (ONS/Nomis "Parish data, England and Wales: Census 2021",
 # dataset NM_2352_1, boundaries as at December 2022), for the 11 parishes moving from these
-# four districts to South-West/South-East Hampshire under the LGR decision of 25 March 2026.
+# four districts to South-West/South-East Hampshire under the Government's March 2026 LGR decision
+# (withdrawn 7 September 2026 pending a fresh decision expected early 2027 — update these then).
 # Sourced/cross-checked directly from the Nomis API (https://www.nomisweb.co.uk), not scraped.
 # Households are the finest-grained alternative ONS publishes at parish level (true dwelling
 # counts only go down to district level) and land within 0.1 percentage points of the
@@ -53,7 +54,7 @@ MID_HAMPSHIRE_RETAINED_FRACTION = {
 # unitary its moving parishes join.
 MOVED_FRACTION = {la: 1 - frac for la, frac in MID_HAMPSHIRE_RETAINED_FRACTION.items()}
 
-# The other three new unitaries created by the same 25 March 2026 decision (SI TBC), alongside
+# The other three new unitaries in the same March 2026 decision (since withdrawn, see above), alongside
 # Mid-Hampshire above. Isle of Wight is unaffected by this decision and stays a standalone
 # unitary. Portsmouth and Southampton, notably, do NOT remain standalone — they're absorbed into
 # South-East and South-West Hampshire respectively. Sourced/cross-checked against two independent
