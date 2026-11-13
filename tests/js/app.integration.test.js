@@ -1123,14 +1123,11 @@ test("the 'Provisional boundaries' chip shows only while a proposed unitary is s
   assert.match(doc.getElementById("modal-body").textContent, /early 2027/);
 });
 
-test("proposed unitaries are labelled provisional in the region select and chart legends", async () => {
+test("proposed unitaries are labelled provisional in the region select", async () => {
+  // Only the selector (plus the chip and dialog) flags them: chart titles, labels and legends
+  // deliberately use the plain name, so no chart carries a caveat the others don't.
   const dom = await loadApp({ region: "eastleigh" });
-  const { window } = dom;
-  const doc = window.document;
+  const doc = dom.window.document;
   const groups = Array.from(doc.querySelectorAll("#region-select optgroup")).map(g => g.label);
   assert.ok(groups.includes("Proposed unitaries (provisional)"), `optgroups were: ${groups.join(", ")}`);
-  // Eastleigh's default context view puts its proposed unitary on the trend chart unasked; the
-  // historical line view is the one with a legend.
-  fireClick(window, doc.querySelector('[data-view="historical"]'));
-  assert.match(doc.getElementById("trend-chart").parentElement.textContent, /South West Hampshire \(provisional\)/);
 });

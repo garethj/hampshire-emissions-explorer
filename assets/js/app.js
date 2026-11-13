@@ -67,7 +67,6 @@
     REGIONS = DATA.meta.region_index.map(r => ({
       key: r.key,
       label: r.name,
-      legendLabel: r.group === "proposed-unitary" ? r.name + " (provisional)" : r.name,
       group: r.group,
       parent: r.parent
     }));
@@ -1221,7 +1220,6 @@
     const series = contextRegions().map(r => ({
       key: r.key,
       label: r.label,
-      legendLabel: r.legendLabel,
       color: r.color,
       targetYear: REGION_TARGET_YEAR[r.key] || TARGET_NET_ZERO_YEAR,
       values: years.map(y => regionMetricValue(r.key, y, metric))
@@ -1393,7 +1391,7 @@
     // legend
     const legendWrap = document.createElement("div");
     legendWrap.className = "legend";
-    series.forEach(s => legendWrap.appendChild(legendItemLine(s.color, s.legendLabel)));
+    series.forEach(s => legendWrap.appendChild(legendItemLine(s.color, s.label)));
     container.appendChild(legendWrap);
 
     buildTrendTableHistorical(years, series, metric);
