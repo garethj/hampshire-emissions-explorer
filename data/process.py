@@ -4,9 +4,11 @@ import sys
 from collections import defaultdict
 from datetime import date
 
+import footprint
 from la_config import ALL_LAS, MID_HAMPSHIRE_LAS, MID_HAMPSHIRE_RETAINED_FRACTION, REGION_DEFS
 
 SRC = sys.argv[1] if len(sys.argv) > 1 else "emissions_source.csv"
+FOOTPRINT_SRC = sys.argv[2] if len(sys.argv) > 2 else "footprint_source.ods"
 
 # DESNZ's published "Territorial emissions (kt CO2e)" already applies 100-year Global Warming
 # Potentials (GWP100, IPCC AR5 Table 8.A.1 without climate-carbon feedbacks: CH4=28, N2O=265,
@@ -49,6 +51,21 @@ with open(SRC, newline="", encoding="utf-8") as f:
 years = sorted(detail.keys())
 sectors = sorted({s for y in detail for la in detail[y] for s in detail[y][la]})
 
+# UK consumption-based ÷ territorial emissions per year (see footprint.py), kept only for years this
+# site's own DESNZ data also covers. Years DESNZ has but DEFRA doesn't yet (DEFRA runs about a year
+# behind) are left out rather than carried forward, so the app's estimated-footprint line simply
+# stops at DEFRA's latest year.
+uk_footprint_years = footprint.parse_footprint(FOOTPRINT_SRC)
+uk_footprint = {
+    "source": footprint.SOURCE_LABEL,
+    "source_url": footprint.SOURCE_URL,
+    "edition": footprint.published_title(FOOTPRINT_SRC),
+    "note": "UK-wide consumption-based and territorial emissions (Mt CO2e, AR5 GWP100) from DEFRA's Figure 8, and their ratio. The app multiplies each region's DESNZ territorial figure by that year's ratio to estimate its footprint including emissions embedded in imports. No consumption-based data is published below UK level, so every region gets the same national ratio.",
+    "years": {y: v for y, v in sorted(uk_footprint_years.items()) if y in detail},
+}
+if not uk_footprint["years"]:
+    sys.exit(f"{FOOTPRINT_SRC} shares no years with {SRC} — wrong file?")
+
 def la_year_sector(detail_map, year, la, sector):
     if sector not in detail_map[year][la]:
         return 0.0
@@ -71,6 +88,7 @@ out = {
         "note_gwp20": "DESNZ's published figures (everything outside the 'gwp20' keys below) use 100-year Global Warming Potentials (GWP100), the international reporting standard, converting CH4 and N2O to CO2e using IPCC AR5 values. This site additionally computes an unofficial 20-year-horizon view (GWP20, same AR5 table) by rescaling each gas's already-published CO2e contribution by GWP20/GWP100 for that gas — methane is ~3x more potent on a 20-year view than on the standard 100-year one, so this shifts sectors, gases and regions with more Agriculture (livestock) and Waste (landfill) noticeably higher relative to their official figure. Nested 'gwp20' objects mirror the shape of their parent (same keys: total_kt_co2e, per_capita_t_co2e, sectors_kt_co2e, gases_kt_co2e).",
         "gwp100_factors": {"CO2": GWP100["CO2"], "CH4": GWP100["CH4"], "N2O": GWP100["N2O"]},
         "gwp20_factors": {"CO2": GWP20["CO2"], "CH4": GWP20["CH4"], "N2O": GWP20["N2O"]},
+        "uk_footprint": uk_footprint,
         "generated": date.today().isoformat()
     },
     "areas_km2": area,
@@ -142,6 +160,8 @@ with open("mid_hampshire_emissions.js", "w") as f:
     f.write(";\n")
 
 print("years:", years[0], "-", years[-1])
+fp_years = sorted(uk_footprint["years"])
+print(f"UK footprint ratio: {fp_years[0]}-{fp_years[-1]}, latest {uk_footprint['years'][fp_years[-1]]['ratio']}")
 print("regions built:", len(REGION_DEFS))
 print("Mid-Hampshire retained fraction per district:", {la: round(f, 4) for la, f in MID_HAMPSHIRE_RETAINED_FRACTION.items()})
 print("Winchester latest total:", out["regions"]["winchester"]["years"][latest]["total_kt_co2e"], "kt CO2e")

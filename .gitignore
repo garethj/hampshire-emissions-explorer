@@ -9,3 +9,4 @@ dist/
 playwright-report/
 __pycache__/
 *.pyc
+data/footprint_source.ods

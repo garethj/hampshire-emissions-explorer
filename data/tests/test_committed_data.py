@@ -36,6 +36,29 @@ def assertClose(test, a, b, tol, msg):
     test.assertLessEqual(abs(a - b), tol, msg + f" (got {a}, expected ~{b}, diff {abs(a - b)})")
 
 
+class TestUkFootprint(unittest.TestCase):
+    """The trend chart's estimated-footprint line multiplies DESNZ territorial figures by these
+    ratios, so they must be consumption ÷ territorial (not ÷ the UK-produced share of the
+    footprint, which is ~0.4 higher) and only cover years the site's own data has."""
+
+    def setUp(self):
+        self.fp = EMISSIONS["meta"]["uk_footprint"]
+
+    def test_ratio_is_consumption_over_territorial(self):
+        for year, e in self.fp["years"].items():
+            assertClose(self, e["ratio"], e["consumption_mt_co2e"] / e["territorial_mt_co2e"], 1e-3, f"ratio for {year}")
+
+    def test_years_are_a_subset_of_emissions_years(self):
+        self.assertTrue(set(self.fp["years"]) <= set(YEARS))
+        self.assertIn(YEARS[0], self.fp["years"], "footprint should start where the DESNZ series does")
+
+    def test_ratios_are_plausible(self):
+        # UK consumption has exceeded territorial emissions in every year since 1996, by between
+        # ~10% and ~85%. Outside 1.0–2.0 most likely means the wrong column was read.
+        for year, e in self.fp["years"].items():
+            self.assertTrue(1.0 < e["ratio"] < 2.0, f"implausible footprint ratio {e['ratio']} for {year}")
+
+
 class TestEmissionsShape(unittest.TestCase):
     def test_region_index_matches_regions(self):
         self.assertEqual(set(REGION_KEYS), set(EMISSIONS["regions"].keys()))

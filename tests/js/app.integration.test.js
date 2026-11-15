@@ -1131,3 +1131,93 @@ test("proposed unitaries are labelled provisional in the region select", async (
   const groups = Array.from(doc.querySelectorAll("#region-select optgroup")).map(g => g.label);
   assert.ok(groups.includes("Proposed unitaries (provisional)"), `optgroups were: ${groups.join(", ")}`);
 });
+
+// ---------------- estimated footprint incl. imports ----------------
+
+function setFootprint(window, on) {
+  const box = window.document.getElementById("footprint-toggle");
+  box.checked = on;
+  fireChange(window, box);
+}
+
+test("footprint checkbox is only available in the historical view on the 100-year horizon, and remembers being ticked", async () => {
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+  const box = doc.getElementById("footprint-toggle");
+  const group = doc.getElementById("footprint-toggle-group");
+
+  // Default view is "Latest year": unavailable, with a reason on hover.
+  assert.equal(box.disabled, true);
+  assert.ok(group.classList.contains("is-disabled"));
+  assert.match(doc.getElementById("footprint-toggle-label").title, /historical/);
+
+  fireClick(window, doc.querySelector('[data-view="historical"]'));
+  assert.equal(box.disabled, false);
+  setFootprint(window, true);
+  assert.ok(doc.querySelectorAll("#trend-chart path.footprint-line").length > 0);
+
+  // 20-year horizon greys it out and removes the line…
+  fireClick(window, doc.querySelector('[data-horizon="gwp20"]'));
+  assert.equal(box.disabled, true);
+  assert.equal(box.checked, false);
+  assert.match(doc.getElementById("footprint-toggle-label").title, /100-year/);
+  assert.equal(doc.querySelectorAll("#trend-chart path.footprint-line").length, 0);
+
+  // …and switching back restores the reader's choice rather than clearing it.
+  fireClick(window, doc.querySelector('[data-horizon="gwp100"]'));
+  assert.equal(box.checked, true);
+  assert.ok(doc.querySelectorAll("#trend-chart path.footprint-line").length > 0);
+});
+
+test("footprint table columns are territorial × that year's UK ratio, and blank where DEFRA has no figure yet", async () => {
+  const dom = await loadApp({ region: "test-valley" });
+  const { window } = dom;
+  const { DATA } = getData(window);
+  const doc = window.document;
+  fireClick(window, doc.querySelector('[data-view="historical"]'));
+  fireClick(window, doc.querySelector('[data-metric="total"]'));
+  setFootprint(window, true);
+
+  const header = Array.from(doc.querySelectorAll("#trend-table thead th")).map((th) => th.textContent);
+  const fpCol = header.findIndex((h) => /^Test Valley incl\. imports/.test(h));
+  assert.ok(fpCol > 0, `expected a Test Valley footprint column, got ${JSON.stringify(header)}`);
+
+  const rows = tableRows(window, "trend-table");
+  const ratios = DATA.meta.uk_footprint.years;
+  DATA.meta.years.forEach((year, i) => {
+    const cell = rows[i][fpCol];
+    if (ratios[year]) {
+      const expected = DATA.regions["test-valley"].years[year].total_kt_co2e * ratios[year].ratio;
+      assert.ok(Math.abs(num(cell) - expected) < 1, `${year}: table shows ${cell}, expected ~${expected}`);
+    } else {
+      assert.equal(cell, "–", `${year} has no UK ratio, so the footprint cell should be blank, got ${cell}`);
+    }
+  });
+  // The site's latest DESNZ year is ahead of DEFRA's, so at least the last row is blank.
+  assert.equal(rows[rows.length - 1][fpCol], "–");
+});
+
+test("one footprint line per plotted region, and the fixed axis rises to fit them", async () => {
+  const dom = await loadApp({ region: "hampshire-solent" });
+  const { window } = dom;
+  const doc = window.document;
+  fireClick(window, doc.querySelector('[data-view="historical"]'));
+  fireClick(window, doc.querySelector('[data-metric="total"]'));
+  setFootprint(window, true);
+
+  const regionLines = doc.querySelectorAll("#trend-chart .legend .legend-swatch.line").length;
+  const fpLines = doc.querySelectorAll("#trend-chart path.footprint-line");
+  assert.equal(fpLines.length, regionLines);
+  assert.ok(doc.querySelector("#trend-chart .legend .legend-swatch.dashed"), "expected a dashed legend entry");
+
+  // Hampshire and the Solent's total footprint is the largest value on the site, so it sets the
+  // fixed axis; every point must sit inside the plot (top margin 20px), not clipped above it.
+  fpLines.forEach((path) => {
+    const ys = path.getAttribute("d").match(/[ML][\d.]+,([\d.]+)/g).map((seg) => Number(seg.split(",")[1]));
+    assert.ok(Math.min(...ys) >= 20, `footprint line runs above the plot area (min y ${Math.min(...ys)})`);
+  });
+
+  fireClick(window, doc.querySelector('[data-info="trend-chart"]'));
+  assert.match(doc.querySelector('#modal-body dd[data-row="axis"]').textContent, /estimated footprint incl\. imports/);
+});

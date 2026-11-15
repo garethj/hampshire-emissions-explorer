@@ -1,6 +1,8 @@
 """Check DESNZ for new emissions/energy data and regenerate the committed data files if so.
 
-Runs data/fetch_source.py and data/fetch_energy_source.py to check for new DESNZ releases, then
+Runs data/fetch_source.py and data/fetch_energy_source.py to check for new DESNZ releases (and
+data/fetch_footprint_source.py for DEFRA's UK carbon footprint workbook, which feeds the trend
+chart's estimated-footprint line and so lives in the emissions data files), then
 only runs data/process.py / data/process_energy.py — which overwrite the four data/mid_hampshire_*
 files committed to git — for whichever dataset actually changed. If nothing new was published,
 this script exits having touched nothing: process.py/process_energy.py stamp a fresh "generated"
@@ -47,12 +49,16 @@ def main():
     emissions_changed = fetch_and_check(
         "fetch_source.py", [DATA / "emissions_source.csv"], force
     )
-    if emissions_changed:
+    print("\n== Checking UK carbon footprint data ==")
+    footprint_changed = fetch_and_check(
+        "fetch_footprint_source.py", [DATA / "footprint_source.ods"], force
+    )
+    if emissions_changed or footprint_changed:
         print("\n== New emissions data — regenerating mid_hampshire_emissions.json/.js ==")
         run([sys.executable, "process.py"], cwd=DATA)
         regenerated += ["data/mid_hampshire_emissions.json", "data/mid_hampshire_emissions.js"]
     else:
-        print("No new emissions data — mid_hampshire_emissions.json/.js left untouched.")
+        print("No new emissions or footprint data — mid_hampshire_emissions.json/.js left untouched.")
 
     print("\n== Checking energy data ==")
     energy_changed = fetch_and_check(

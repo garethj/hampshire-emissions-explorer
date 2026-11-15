@@ -12,6 +12,10 @@
   let currentConsumptionDetail = false; // show consumption chart as all fuel types instead of simple groups
   let currentConsumptionView = "fuel"; // "fuel" (by fuel type) | "sector" (by Domestic/Transport/Industrial)
   let currentHorizon = "gwp100"; // "gwp100" (official DESNZ) | "gwp20"
+  // Whether the reader has ticked the trend chart's "estimated footprint incl. imports" box. Kept
+  // separate from whether the line actually shows (footprintActive()), so switching to a view or
+  // horizon where it's unavailable and back again restores their choice rather than clearing it.
+  let footprintPref = false;
   // "kwh" (GWh / kWh per person) | "toe" (ktoe / toe per person) — shared display unit for the
   // generation and consumption charts, which otherwise show each dataset's own native unit (see
   // KTOE_TO_MWH below).
@@ -1062,11 +1066,13 @@
   // itself had changed.
   const trendGlobalMaxCache = {};
   const trendGlobalMaxMetaCache = {};
-  function trendGlobalMaxKey(metric, onlyYear) {
-    return [metric, onlyYear || "all"].join("|");
+  // withFootprint also scans every region's estimated footprint (100-year only, the one horizon it
+  // exists on), so ticking that box raises the fixed axis to fit it rather than clipping the line.
+  function trendGlobalMaxKey(metric, onlyYear, withFootprint) {
+    return [metric, onlyYear || "all", withFootprint ? "fp" : ""].join("|");
   }
-  function trendGlobalMax(metric, onlyYear) {
-    const cacheKey = trendGlobalMaxKey(metric, onlyYear);
+  function trendGlobalMax(metric, onlyYear, withFootprint) {
+    const cacheKey = trendGlobalMaxKey(metric, onlyYear, withFootprint);
     if (trendGlobalMaxCache[cacheKey] !== undefined) return trendGlobalMaxCache[cacheKey];
     const years = onlyYear ? [onlyYear] : DATA.meta.years;
     const t = newExtentTracker();
@@ -1076,6 +1082,10 @@
           for (const year of years) {
             const v = regionMetricValue(r.key, year, metric);
             trackMax(t, v, { region: r.key, year: year, category: null, value: v, horizon: horizon });
+            if (withFootprint && horizon === "gwp100") {
+              const fv = footprintValue(r.key, year, metric);
+              if (fv !== null) trackMax(t, fv, { region: r.key, year: year, category: "estimated footprint incl. imports", value: fv, horizon: horizon });
+            }
           }
         }
       });
@@ -1086,9 +1096,56 @@
   // Which (region, year, horizon) currently sets trendGlobalMax — see describeSetter/the trend
   // chart's dynamicIntro. Has no `category` (a region's whole-area total, not split further), so
   // describeSetter's "region's X in year" phrasing is built with a plain "figure" placeholder.
-  function trendGlobalMaxSetter(metric, onlyYear) {
-    trendGlobalMax(metric, onlyYear);
-    return trendGlobalMaxMetaCache[trendGlobalMaxKey(metric, onlyYear)];
+  function trendGlobalMaxSetter(metric, onlyYear, withFootprint) {
+    trendGlobalMax(metric, onlyYear, withFootprint);
+    return trendGlobalMaxMetaCache[trendGlobalMaxKey(metric, onlyYear, withFootprint)];
+  }
+
+  // ---------------- estimated footprint incl. imports ----------------
+  // DESNZ's local figures are territorial only. The trend chart can add an estimate of each area's
+  // consumption-based footprint by multiplying its territorial figure by the UK-wide ratio of
+  // consumption-based to territorial emissions for that year (DEFRA/University of Leeds; see
+  // data/footprint.py). Null for years DEFRA doesn't cover yet, so the line stops there rather
+  // than carrying a stale ratio forward.
+  function ukFootprintRatio(year) {
+    const fp = DATA.meta.uk_footprint;
+    const entry = fp && fp.years[year];
+    return entry ? entry.ratio : null;
+  }
+
+  function footprintLatestYear() {
+    const fp = DATA.meta.uk_footprint;
+    const years = fp ? Object.keys(fp.years).map(Number) : [];
+    return years.length ? Math.max(...years) : null;
+  }
+
+  // Historical view only: a single latest-year bar can't show it, since DEFRA's latest year lags
+  // DESNZ's. 100-year horizon only: DEFRA publishes no 20-year figures, and applying a 100-year
+  // ratio to 20-year territorial figures would mix the two bases.
+  function footprintUnavailableReason() {
+    if (!DATA.meta.uk_footprint) return "No UK footprint data loaded";
+    if (currentView !== "historical") return "Switch to the historical trend view to show this";
+    if (currentHorizon !== "gwp100") return "Only available on the 100-year time horizon";
+    return null;
+  }
+
+  function footprintActive() {
+    return footprintPref && footprintUnavailableReason() === null;
+  }
+
+  function footprintValue(regionKey, year, metric) {
+    const ratio = ukFootprintRatio(year);
+    return ratio === null ? null : regionMetricValue(regionKey, year, metric) * ratio;
+  }
+
+  function syncFootprintToggle() {
+    const reason = footprintUnavailableReason();
+    const toggle = document.getElementById("footprint-toggle");
+    toggle.checked = footprintPref && reason === null;
+    toggle.disabled = reason !== null;
+    document.getElementById("footprint-toggle-group").classList.toggle("is-disabled", reason !== null);
+    const label = document.getElementById("footprint-toggle-label");
+    if (reason) label.title = reason; else label.removeAttribute("title");
   }
 
   // For the two derived electricity-split categories only, shows the actual calculation behind
@@ -1193,8 +1250,10 @@
     document.getElementById("trend-chart-title").textContent =
       metricLabel + ", " + (view === "historical" ? (years[0] + "–" + ly) : ly) + horizonTitleSuffix() + modeSuffix;
 
+    syncFootprintToggle();
+
     const trendValueFmt = v => fmtValue(metric, v) + " " + unitLabel(metric);
-    const trendSetter = view === "historical" ? trendGlobalMaxSetter(metric) : trendGlobalMaxSetter(metric, ly);
+    const trendSetter = view === "historical" ? trendGlobalMaxSetter(metric, null, footprintActive()) : trendGlobalMaxSetter(metric, ly);
     trendScaleNoteText = trendSetter
       ? "Currently set by " + describeSetter(trendSetter, trendValueFmt) + "."
       : "";
@@ -1217,12 +1276,14 @@
   const REGION_TARGET_YEAR = { winchester: TARGET_WCC_YEAR };
 
   function buildTrendChartHistorical(container, years, metric) {
+    const showFootprint = footprintActive();
     const series = contextRegions().map(r => ({
       key: r.key,
       label: r.label,
       color: r.color,
       targetYear: REGION_TARGET_YEAR[r.key] || TARGET_NET_ZERO_YEAR,
-      values: years.map(y => regionMetricValue(r.key, y, metric))
+      values: years.map(y => regionMetricValue(r.key, y, metric)),
+      footprint: showFootprint ? years.map(y => footprintValue(r.key, y, metric)) : null
     }));
 
     const lastActualYear = years[years.length - 1];
@@ -1254,7 +1315,8 @@
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     container.appendChild(svg);
 
-    const maxVal = (currentScaleMode === "fixed" ? trendGlobalMax(metric) : Math.max(...series.flatMap(s => s.values))) * 1.08;
+    const autoMax = Math.max(...series.flatMap(s => s.values.concat((s.footprint || []).filter(v => v !== null))));
+    const maxVal = (currentScaleMode === "fixed" ? trendGlobalMax(metric, null, showFootprint) : autoMax) * 1.08;
     const xScale = year => M.left + ((year - chartMinYear) / (chartMaxYear - chartMinYear)) * plotW;
     const yScale = v => M.top + plotH - (v / maxVal) * plotH;
 
@@ -1277,6 +1339,23 @@
     });
 
     el("line", { x1: M.left, x2: M.left + plotW, y1: M.top + plotH, y2: M.top + plotH, stroke: cssVar("--baseline"), "stroke-width": "1" }, svg);
+
+    // Estimated footprint: same colour as its region's solid line, longer dashes than the faint
+    // net-zero pathway (3,3 at 0.3 opacity) and much stronger, so the two dashed styles can't be
+    // confused. Drawn first so every solid territorial line sits on top of it.
+    if (showFootprint) {
+      series.forEach(s => {
+        let d = "";
+        let pen = "M";
+        years.forEach((y, i) => {
+          const v = s.footprint[i];
+          if (v === null) { pen = "M"; return; }
+          d += pen + xScale(y).toFixed(1) + "," + yScale(v).toFixed(1) + " ";
+          pen = "L";
+        });
+        if (d) el("path", { class: "footprint-line", d: d, fill: "none", stroke: s.color, "stroke-width": "1.75", "stroke-dasharray": "6,4", opacity: "0.85", "stroke-linejoin": "round" }, svg);
+      });
+    }
 
     series.forEach(s => {
       let d = "";
@@ -1382,6 +1461,10 @@
             text += " (" + fmtPct((val - s.values[idx - 1]) / s.values[idx - 1] * 100) + " vs " + years[idx - 1] + ")";
           }
           ttRow(tt, s.color, s.label, text);
+          const fv = s.footprint && idx >= 0 ? s.footprint[idx] : null;
+          if (fv !== null) {
+            ttSubRow(tt, "Incl. imports (est.)", fmtValue(metric, fv) + " " + unitShort(metric) + " (× " + ukFootprintRatio(year).toFixed(2) + ")", false, metric !== "per_capita");
+          }
           ttPopulationRow(tt, s.key, year, metric, false, true);
         });
       });
@@ -1392,6 +1475,7 @@
     const legendWrap = document.createElement("div");
     legendWrap.className = "legend";
     series.forEach(s => legendWrap.appendChild(legendItemLine(s.color, s.label)));
+    if (showFootprint) legendWrap.appendChild(legendItemDashed("Estimated footprint incl. imports, to " + footprintLatestYear()));
     container.appendChild(legendWrap);
 
     buildTrendTableHistorical(years, series, metric);
@@ -1472,6 +1556,18 @@
     return item;
   }
 
+  function legendItemDashed(label) {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    const sw = document.createElement("span");
+    sw.className = "legend-swatch dashed";
+    const txt = document.createElement("span");
+    txt.textContent = label;
+    item.appendChild(sw);
+    item.appendChild(txt);
+    return item;
+  }
+
   function legendItemBox(color, label) {
     const item = document.createElement("div");
     item.className = "legend-item";
@@ -1492,15 +1588,18 @@
     table.className = "data-table";
     const thead = document.createElement("thead");
     const htr = document.createElement("tr");
-    ["Year"].concat(series.map(s => s.label + " (" + unitLabel(metric) + ")")).forEach(h => {
-      const th = document.createElement("th"); th.textContent = h; htr.appendChild(th);
-    });
+    const fpSeries = series.filter(s => s.footprint);
+    ["Year"].concat(series.map(s => s.label + " (" + unitLabel(metric) + ")"))
+      .concat(fpSeries.map(s => s.label + " incl. imports, est. (" + unitLabel(metric) + ")")).forEach(h => {
+        const th = document.createElement("th"); th.textContent = h; htr.appendChild(th);
+      });
     thead.appendChild(htr);
     table.appendChild(thead);
     const tbody = document.createElement("tbody");
     years.forEach((y, i) => {
       const tr = document.createElement("tr");
-      const cells = [y].concat(series.map(s => fmtValue(metric, s.values[i])));
+      const cells = [y].concat(series.map(s => fmtValue(metric, s.values[i])))
+        .concat(fpSeries.map(s => (s.footprint[i] === null ? "–" : fmtValue(metric, s.footprint[i]))));
       cells.forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
       tbody.appendChild(tr);
     });
@@ -2539,7 +2638,8 @@
       readIt: [
         "The chart shows the selected region in context: itself, the proposed unitary it rolls up to, and Hampshire and the Solent. Picking Eastleigh shows Eastleigh, South West Hampshire and Hampshire and the Solent.",
         "Tick \"Compare all constituents\" to see every sibling instead — all historic districts within the selected unitary, or all unitaries within Hampshire and the Solent.",
-        "In the historical view, dashed lines are a straight-line pathway from each region's latest figure to zero at its own net-zero target."
+        "In the historical view, faint dashed lines are a straight-line pathway from each region's latest figure to zero at its own net-zero target.",
+        "Also in the historical view, tick \"Add estimated footprint incl. imports\" to add each region's emissions caused abroad by what its residents buy. See [[footprint-toggle|Estimated footprint including imports]]."
       ],
       axisNote: () => trendScaleNoteText,
       method: [
@@ -2551,6 +2651,38 @@
         ["Fixed scale", "This chart uses one site-wide maximum, across all 20 regions and both GWP horizons, rather than a per-tier or per-horizon one. See [[scale-mode-toggle|Fixed vs auto scale]]."]
       ],
       link: { href: "https://assets.publishing.service.gov.uk/media/6a3bacc9d52550a19950f2f5/2005-24-local-authority-ghg-emissions-csv-dataset.csv", label: "Download the source CSV" }
+    },
+    "footprint-toggle": {
+      title: "Estimated footprint including imports",
+      summary: "An estimate of each area's full carbon footprint, adding emissions released abroad to make the goods and services its residents buy, scaled from UK-wide figures.",
+      readIt: [
+        "Each solid line is the official territorial figure: emissions released within the area's boundary. The bolder dashed line in the same colour is the estimated footprint.",
+        "The gap between them is mostly emissions embedded in imports, such as manufactured goods, food grown abroad and overseas services.",
+        "Across the UK, the footprint has fallen much more slowly than territorial emissions, so territorial figures alone overstate progress.",
+        "Available in the historical trend view on the 100-year time horizon. The dashed line stops at the latest year the UK-wide figures cover."
+      ],
+      method: [
+        ["Source", () => "University of Leeds for DEFRA, “" + (DATA.meta.uk_footprint.edition || "UK and England's carbon footprint") + "”, Figure 8: UK consumption-based and territorial greenhouse gas emissions."],
+        ["Basis", "Consumption-based emissions count everything emitted, in the UK or abroad, to supply the goods and services UK residents buy, plus their own home heating and driving. Emissions from UK-made goods that are exported are left out. Territorial emissions are what's released inside the UK's borders, the same basis as every other chart here. The UK territorial total leaves out international aviation and shipping, as DESNZ's local figures do, so the ratio's denominator matches what it's applied to."],
+        ["Calculated here", () => {
+          const ly = footprintLatestYear();
+          return "No consumption-based data is published below UK level. For each year, this site divides UK consumption-based emissions by UK territorial emissions (" +
+            ukFootprintRatio(ly).toFixed(2) + " in " + ly + ") and multiplies each area's territorial figure by that ratio. Hover the chart to see the ratio for any year.";
+        }],
+        ["UK-wide comparison", () => {
+          const years = DATA.meta.uk_footprint.years;
+          const first = Math.min(...Object.keys(years).map(Number));
+          const ly = footprintLatestYear();
+          const change = key => Math.round((years[ly][key] / years[first][key] - 1) * 100);
+          return "From " + first + " to " + ly + ", UK territorial emissions fell by " + -change("territorial_mt_co2e") +
+            "% and the UK consumption-based footprint by " + -change("consumption_mt_co2e") + "%.";
+        }],
+        ["Caveat", "Every area gets the same national ratio, which ignores local differences. Higher-income areas tend to have larger footprints, so this probably understates them. Areas with heavy industry release emissions that partly serve consumers elsewhere, so this probably overstates them."],
+        ["Time horizon", "DEFRA publishes the footprint on the 100-year basis only. Applying a 100-year ratio to 20-year figures would mix two bases, so the estimate is switched off under the 20-year horizon. See [[horizon-toggle|100-year vs 20-year time horizon]]."],
+        ["Latest year", "DEFRA's figures run about a year behind DESNZ's local data. The dashed line stops at DEFRA's latest year rather than reusing an old ratio for later years."],
+        ["Target pathways", "Net-zero pathway lines follow territorial figures only, since local and national targets are set on that basis."]
+      ],
+      link: { href: "https://www.gov.uk/government/statistics/uks-carbon-footprint", label: "gov.uk statistical release" }
     },
     "sector-chart": {
       title: "Emissions by sector",
@@ -2648,7 +2780,8 @@
         ["Update cycle", () => "DESNZ typically publishes new figures each summer, roughly 18–24 months behind the current year. This site's data was last refreshed " + formatIsoDate(DATA.meta.generated) + ", and is updated manually when a new release lands."],
         ["Comparing to other published figures", "DESNZ revises prior years' figures on every release, not just the newest year, so a district's total for a given year can shift slightly between releases. A figure quoted elsewhere — a council webpage, a climate action plan — may be citing an earlier DESNZ release than this site uses. Check the release date before assuming a discrepancy is an error in either source."],
         ["Energy data", "Renewable electricity generation by technology (2014–2024) and energy consumption by fuel (2005–2024), both from DESNZ at local authority level, aggregated to every region here the same way as the emissions figures. See [[generation-chart|Renewable electricity generation by technology]] and [[consumption-chart|Energy consumption by fuel]] for category grouping and unit conversions."],
-        ["Data & code", "Every figure traces back to the single published DESNZ CSV linked below, with the affected districts' contributions scaled using 2021 Census parish population shares. Nothing else here is estimated or modelled."],
+        ["Estimated footprint", "The trend chart's optional footprint line is the one figure not built from DESNZ local data alone. It scales each area's territorial figure by the UK-wide ratio of consumption-based to territorial emissions, from DEFRA's carbon footprint statistics. See [[footprint-toggle|Estimated footprint including imports]]."],
+        ["Data & code", "Every emissions figure traces back to the single published DESNZ CSV linked below, with the affected districts' contributions scaled using 2021 Census parish population shares. Apart from the optional footprint estimate above, nothing else here is estimated or modelled."],
         ["Licence", "Contains public sector information licensed under the Open Government Licence v3.0."]
       ],
       link: { href: "https://www.gov.uk/government/statistics/uk-local-authority-and-regional-greenhouse-gas-emissions-statistics-2005-to-2024/2005-to-2024-uk-local-and-regional-greenhouse-gas-emissions-statistical-release-web-accessible", label: "gov.uk statistical release" }
@@ -2966,6 +3099,11 @@
 
     document.getElementById("compare-constituents-toggle").addEventListener("change", (ev) => {
       setCompareMode(ev.target.checked ? "constituents" : "context");
+    });
+
+    document.getElementById("footprint-toggle").addEventListener("change", (ev) => {
+      footprintPref = ev.target.checked;
+      buildTrendChart();
     });
 
     document.querySelectorAll("[data-metric]").forEach(btn => {

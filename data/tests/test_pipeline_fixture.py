@@ -24,6 +24,7 @@ DATA_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, DATA_DIR)
 
 import la_config as lc  # noqa: E402
+from tests.ods_fixture import TITLE as FOOTPRINT_TITLE, write_footprint_ods  # noqa: E402
 
 # Must match process.py's own tables — if DESNZ or process.py's IPCC AR5 source ever changes
 # these, update both places.
@@ -31,6 +32,10 @@ GWP100 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
 GWP20 = {"CO2": 1.0, "CH4": 84.0, "N2O": 264.0}
 
 YEARS = [2020, 2021]
+# DEFRA's footprint runs a year behind DESNZ, so the fixture mirrors that: 2019 (before the DESNZ
+# fixture's range, should be dropped), 2020 (overlaps, kept) and nothing for 2021 (should be left
+# out, not carried forward from 2020).
+FOOTPRINT_YEARS = {2019: (800.0, 450.0), 2020: (700.0, 400.0)}
 SECTORS_SUBS = {
     "Transport": ["Transport Road"],
     "Agriculture": ["Agriculture Livestock"],
@@ -97,10 +102,12 @@ class TestProcessPipelineFixture(unittest.TestCase):
         cls.tmpdir = TemporaryDirectory()
         fixture_csv = os.path.join(cls.tmpdir.name, "fixture.csv")
         write_fixture_csv(fixture_csv)
+        fixture_ods = os.path.join(cls.tmpdir.name, "footprint.ods")
+        write_footprint_ods(fixture_ods, FOOTPRINT_YEARS)
 
         env = dict(os.environ, PYTHONPATH=DATA_DIR)
         result = subprocess.run(
-            [sys.executable, os.path.join(DATA_DIR, "process.py"), fixture_csv],
+            [sys.executable, os.path.join(DATA_DIR, "process.py"), fixture_csv, fixture_ods],
             cwd=cls.tmpdir.name, env=env, capture_output=True, text=True,
         )
         cls.process_result = result
@@ -152,6 +159,20 @@ class TestProcessPipelineFixture(unittest.TestCase):
         expected = expected_region_total(lc.HAMPSHIRE_SOLENT_LAS, None, year)
         actual = self.out["regions"]["hampshire-solent"]["years"][str(year)]["total_kt_co2e"]
         self.assertAlmostEqual(actual, expected, places=2)
+
+    def test_uk_footprint_ratio_is_consumption_over_territorial(self):
+        fp = self.out["meta"]["uk_footprint"]
+        self.assertEqual(fp["edition"], FOOTPRINT_TITLE)
+        entry = fp["years"]["2020"]
+        self.assertAlmostEqual(entry["ratio"], 700.0 / 400.0, places=4)
+        self.assertEqual(entry["consumption_mt_co2e"], 700.0)
+        self.assertEqual(entry["territorial_mt_co2e"], 400.0)
+
+    def test_uk_footprint_keeps_only_overlapping_years_and_never_carries_forward(self):
+        # 2019 is outside the DESNZ fixture's years; 2021 is a DESNZ year DEFRA hasn't covered.
+        # The app relies on a missing year meaning "no estimate", so 2021 must be absent rather
+        # than reusing 2020's ratio.
+        self.assertEqual(sorted(self.out["meta"]["uk_footprint"]["years"]), ["2020"])
 
 
 if __name__ == "__main__":
