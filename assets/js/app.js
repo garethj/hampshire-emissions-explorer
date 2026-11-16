@@ -715,7 +715,8 @@
     return metric === "total" ? raw : raw / yd.population_thousands;
   }
 
-  // Sub-sector detail only exists for the latest year (DATA.subsector_detail_latest_year),
+  // The site only bakes in sub-sector detail for the latest year (DATA.subsector_detail_latest_year;
+  // DESNZ publishes it for every year, but data/process.py exports just the latest),
   // grouped by parent sector (in SECTOR_ORDER) and sorted by magnitude within each sector.
   // Groups sub-sector rows under their parent sector, with sectors ordered by their own total
   // (descending) — the same order the non-detail view sorts by — so toggling "sub-sector
@@ -927,7 +928,7 @@
   // tierScopeKey), a horizon switch is a real change to the underlying numbers, but sharing one
   // range across both means flipping the 100/20-year toggle for a single region doesn't rescale
   // the axis, making that comparison legible too — auto scale is still there for whichever horizon
-  // ends up looking compressed. Sub-sector detail only exists for the latest year
+  // ends up looking compressed. The site only bakes in sub-sector detail for the latest year
   // (DATA.subsector_detail_latest_year has no history) regardless of onlyYear, since there's
   // nothing else to scan.
   const sectorTierMaxCache = {};
@@ -1636,7 +1637,7 @@
     const metric = currentMetric;
     const view = currentView;
 
-    // Sub-sector detail only exists for the latest year, so disable it whenever the
+    // The site only has sub-sector detail for the latest year, so disable it whenever the
     // historical view is active (and force it off so the toggle doesn't lie about state).
     const detailAvailable = view === "latest";
     if (!detailAvailable) currentDetail = false;
@@ -2282,8 +2283,8 @@
   // Structurally identical to the generation chart above, but categories come from either
   // FUEL_ORDER ("complex") or FUEL_SIMPLE_GROUPS ("simple") depending on currentConsumptionDetail
   // — the same simple/detailed split as the sector chart's sub-sector toggle, but available in
-  // both Latest year and Historical trend view here, since (unlike sub-sector emissions detail)
-  // DESNZ publishes the full fuel breakdown for every year, not just the latest.
+  // both Latest year and Historical trend view here, since (unlike the sector chart's sub-sector
+  // detail, which the site only bakes in for the latest year) the full fuel breakdown is in the data for every year.
 
   function buildConsumptionChart(regionKey) {
     const container = document.getElementById("consumption-chart");
@@ -2696,7 +2697,7 @@
       axisNote: () => sectorScaleNoteText,
       method: [
         ["Source", "DESNZ local authority greenhouse gas emissions statistics, each sector summed across its sub-sectors and gases."],
-        ["Sub-sector detail", "Published for the latest year only, so that breakdown isn't available in the historical trend view."],
+        ["Sub-sector detail", "DESNZ publishes sub-sector figures for every year from 2005, but this site currently includes only the latest year's, so that breakdown isn't available in the historical trend view."],
         ["Composite regions", "Each sector is the sum of that sector's figure across the constituent districts, scaled as described in [[region-toggle|Choosing a region]]."]
       ]
     },
