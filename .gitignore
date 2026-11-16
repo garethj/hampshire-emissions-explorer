@@ -10,3 +10,6 @@ playwright-report/
 __pycache__/
 *.pyc
 data/footprint_source.ods
+
+# Talk/blog notes and WinACC reference reports: project work, not part of the tool
+notes/
