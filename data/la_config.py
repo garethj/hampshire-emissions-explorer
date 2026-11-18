@@ -12,9 +12,8 @@ ALL_LAS = sorted(set(MID_HAMPSHIRE_LAS) | set(HAMPSHIRE_SOLENT_LAS))
 
 # Hampshire County Council's own area today: the 11 current districts, i.e. Hampshire and the
 # Solent minus the three unitary councils (Portsmouth, Southampton, Isle of Wight) that sit
-# outside the county council's two-tier structure. Requested by Phil so the site can speak to
-# "Hampshire" as a whole ahead of a conversation with the county's leader. DESNZ's own emissions
-# spreadsheets carry a pre-aggregated "Hampshire total" row (the "Second Tier Authority" column),
+# outside the county council's two-tier structure. DESNZ's own emissions spreadsheets carry a
+# pre-aggregated "Hampshire total" row (the "Second Tier Authority" column),
 # but summing these 11 district rows through the same REGION_DEFS machinery as every other region
 # on this site reproduces that figure exactly, without a second, differently-shaped source file —
 # and energy consumption/generation have no such pre-aggregated row to begin with, so district
