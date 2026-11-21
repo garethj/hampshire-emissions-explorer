@@ -2556,6 +2556,21 @@
   // from the rest: GWP weighting in "horizon-toggle", parish apportionment in
   // "general-methodology", grid pooling in "generation-chart", toe/MWh in "energy-unit-toggle".
   const INFO_CONTENT = {
+    "about": {
+      title: "About this tool",
+      summary: "This tool compares greenhouse gas emissions and energy use for Hampshire's councils, today's and the proposed new ones, and it's a work in progress we'd like comments on.",
+      readIt: [
+        "Pick a council, a proposed unitary, or Hampshire and the Solent. You'll see how its emissions have changed since 2005 and which sectors they come from. You can also see how much renewable energy it generates and how much energy it uses.",
+        "The proposed unitaries are provisional while the Government reviews its reorganisation decision. See [[region-toggle|Choosing a region]].",
+        "Switch to per-person figures to compare areas of different sizes.",
+        "We're still building it. Charts and figures may change, and you may spot mistakes.",
+        "Tell us what you think: what's useful, what's confusing, and what's missing, using [[https://www.winacc.org.uk/contact/|WinACC's contact page]]."
+      ],
+      method: [
+        ["Source", "DESNZ (Department for Energy Security and Net Zero) local authority emissions and energy statistics. See [[general-methodology|Full methodology & sources]]."],
+        ["Built by", "WinACC (Winchester Action on Climate Change), for the Hampshire Local Government Reorganisation working group. The source code is on GitHub."]
+      ]
+    },
     "region-toggle": {
       title: "Choosing a region",
       summary: "Every current Hampshire local authority, the Combined County Authority above them, and the four unitaries proposed to replace them.",
@@ -2790,20 +2805,28 @@
   };
 
   // Renders a body/dd string into `el`, turning any [[key|label]] marker into an inline button
-  // that opens that entry in this same dialog. Text either side is added as text nodes, so
-  // authored content still can't inject markup — the marker syntax is the only thing parsed.
-  const CROSS_REF = /\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g;
+  // that opens that entry in this same dialog, and any [[https://…|label]] marker into an external
+  // link. Text either side is added as text nodes, so authored content still can't inject markup —
+  // the marker syntax is the only thing parsed.
+  const CROSS_REF = /\[\[(https:\/\/[^|\]\s]+|[a-z0-9-]+)\|([^\]]+)\]\]/g;
 
   function renderRichText(el, str) {
     let last = 0;
-    str.replace(CROSS_REF, (match, key, label, offset) => {
+    str.replace(CROSS_REF, (match, target, label, offset) => {
       if (offset > last) el.appendChild(document.createTextNode(str.slice(last, offset)));
-      const btn = document.createElement("button");
-      btn.className = "info-link";
-      btn.type = "button";
-      btn.dataset.info = key;
-      btn.textContent = label;
-      el.appendChild(btn);
+      if (target.startsWith("https://")) {
+        const a = document.createElement("a");
+        a.href = target; a.target = "_blank"; a.rel = "noopener";
+        a.textContent = label;
+        el.appendChild(a);
+      } else {
+        const btn = document.createElement("button");
+        btn.className = "info-link";
+        btn.type = "button";
+        btn.dataset.info = target;
+        btn.textContent = label;
+        el.appendChild(btn);
+      }
       last = offset + match.length;
       return match;
     });

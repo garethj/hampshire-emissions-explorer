@@ -1221,3 +1221,26 @@ test("one footprint line per plotted region, and the fixed axis rises to fit the
   fireClick(window, doc.querySelector('[data-info="trend-chart"]'));
   assert.match(doc.querySelector('#modal-body dd[data-row="axis"]').textContent, /estimated footprint incl\. imports/);
 });
+
+test("the work-in-progress chip and footer link both open the about dialog, with a contact link", async () => {
+  // Chris asked for the site to say what it does, that it's a work in progress, and how to send
+  // comments. The chip makes that status visible to everyone; the dialog must carry a real,
+  // clickable route to WinACC, not just text naming one.
+  const dom = await loadApp({ region: "winchester" });
+  const { window } = dom;
+  const doc = window.document;
+
+  const openers = doc.querySelectorAll('[data-info="about"]');
+  assert.ok(doc.querySelector('.site-header [data-info="about"]'), "the header should have a chip opening the about dialog");
+  assert.ok(doc.querySelector('.site-footer [data-info="about"]'), "the footer should link to the about dialog");
+
+  openers.forEach(btn => {
+    fireClick(window, btn);
+    assert.equal(doc.getElementById("modal-title").textContent, "About this tool");
+    assert.match(doc.querySelector("#modal-body p.modal-summary").textContent, /work in progress/);
+    const contact = doc.querySelector('#modal-body .read-it a[href="https://www.winacc.org.uk/contact/"]');
+    assert.ok(contact, "the about dialog should link to WinACC's contact page");
+    assert.equal(contact.rel, "noopener");
+    doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
+  });
+});
