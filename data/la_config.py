@@ -57,7 +57,7 @@ MOVED_FRACTION = {la: 1 - frac for la, frac in MID_HAMPSHIRE_RETAINED_FRACTION.i
 # Mid-Hampshire above. Isle of Wight is unaffected by this decision and stays a standalone
 # unitary. Portsmouth and Southampton, notably, do NOT remain standalone — they're absorbed into
 # South-East and South-West Hampshire respectively. Sourced/cross-checked against two independent
-# accounts of the decision (Winchester Action on Climate Crisis and Hart District Council), both
+# accounts of the decision (Winchester Action on the Climate Crisis and Hart District Council), both
 # consistent with each other and with the moving-parish destinations already recorded above:
 # https://www.winacc.org.uk/new-unitary-councils-in-hampshire-and-the-solent/
 # https://www.hart.gov.uk/local-government-reorganisation/what-happening-across-hampshire
