@@ -2568,7 +2568,7 @@
       ],
       method: [
         ["Source", "DESNZ (Department for Energy Security and Net Zero) local authority emissions and energy statistics. See [[general-methodology|Full methodology & sources]]."],
-        ["Built by", "WinACC (Winchester Action on the Climate Crisis), for the Hampshire Local Government Reorganisation working group. The source code is on GitHub."]
+        ["Built by", "WinACC (Winchester Action on the Climate Crisis), for the Hampshire Local Government Reorganisation working group. The source code is on [[https://github.com/garethj/hampshire-emissions-explorer|GitHub]]."]
       ]
     },
     "region-toggle": {

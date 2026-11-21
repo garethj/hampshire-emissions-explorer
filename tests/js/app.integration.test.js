@@ -1241,6 +1241,7 @@ test("the work-in-progress chip and footer link both open the about dialog, with
     const contact = doc.querySelector('#modal-body .read-it a[href="https://www.winacc.org.uk/contact/"]');
     assert.ok(contact, "the about dialog should link to WinACC's contact page");
     assert.equal(contact.rel, "noopener");
+    assert.ok(doc.querySelector('#modal-body a[href="https://github.com/garethj/hampshire-emissions-explorer"]'), "the about dialog should link to the GitHub repo");
     doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape" }));
   });
 });
