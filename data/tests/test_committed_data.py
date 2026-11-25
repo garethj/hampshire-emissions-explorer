@@ -37,26 +37,36 @@ def assertClose(test, a, b, tol, msg):
 
 
 class TestUkFootprint(unittest.TestCase):
-    """The trend chart's estimated-footprint line multiplies DESNZ territorial figures by these
-    ratios, so they must be consumption ÷ territorial (not ÷ the UK-produced share of the
-    footprint, which is ~0.4 higher) and only cover years the site's own data has."""
+    """The trend chart's estimated-footprint line multiplies DESNZ local-authority territorial
+    figures by these ratios, so they must be UK consumption ÷ the sum of every local authority's
+    territorial emissions: not ÷ DEFRA's national territorial total (~7% higher, as it includes
+    emissions no local authority is assigned), nor ÷ the UK-produced share of the footprint
+    (higher still). They must only cover years the site's own data has."""
 
     def setUp(self):
         self.fp = EMISSIONS["meta"]["uk_footprint"]
 
-    def test_ratio_is_consumption_over_territorial(self):
+    def test_ratio_is_consumption_over_local_authority_sum(self):
         for year, e in self.fp["years"].items():
-            assertClose(self, e["ratio"], e["consumption_mt_co2e"] / e["territorial_mt_co2e"], 1e-3, f"ratio for {year}")
+            assertClose(self, e["ratio"], e["consumption_mt_co2e"] / e["la_territorial_mt_co2e"], 1e-3, f"ratio for {year}")
+
+    def test_local_authority_sum_is_a_little_below_the_national_total(self):
+        # The national inventory includes emissions DESNZ doesn't assign to any local authority,
+        # so the local-authority sum sits a few percent below it (5–7% in the 2026 releases). A
+        # sum near or above the national total most likely means rows were dropped or doubled.
+        for year, e in self.fp["years"].items():
+            share = e["la_territorial_mt_co2e"] / e["territorial_mt_co2e"]
+            self.assertTrue(0.85 < share < 1.0, f"local-authority sum is {share:.1%} of the national total in {year}")
 
     def test_years_are_a_subset_of_emissions_years(self):
         self.assertTrue(set(self.fp["years"]) <= set(YEARS))
         self.assertIn(YEARS[0], self.fp["years"], "footprint should start where the DESNZ series does")
 
     def test_ratios_are_plausible(self):
-        # UK consumption has exceeded territorial emissions in every year since 1996, by between
-        # ~10% and ~85%. Outside 1.0–2.0 most likely means the wrong column was read.
+        # UK consumption has exceeded the local-authority territorial sum in every year since
+        # 2005, by between ~45% and ~95%. Outside 1.2–2.5 most likely means the wrong column was read.
         for year, e in self.fp["years"].items():
-            self.assertTrue(1.0 < e["ratio"] < 2.0, f"implausible footprint ratio {e['ratio']} for {year}")
+            self.assertTrue(1.2 < e["ratio"] < 2.5, f"implausible footprint ratio {e['ratio']} for {year}")
 
 
 class TestEmissionsShape(unittest.TestCase):

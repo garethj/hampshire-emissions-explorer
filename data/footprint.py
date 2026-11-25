@@ -1,17 +1,22 @@
 """Reads DEFRA's UK carbon footprint statistics (produced by the University of Leeds) for the
-trend chart's "estimated footprint including imports" line.
+trend chart's "estimated consumption footprint" line.
 
 DESNZ's local authority data is territorial only: emissions released within each area's boundary.
 Nobody publishes consumption-based emissions below UK level, so the site estimates them by scaling
-each area's territorial figure by the UK-wide ratio of consumption-based to territorial emissions
-for the same year. Both UK series come from one table, Figure_8 of DEFRA's "figures and tables"
-workbook, so numerator and denominator always share a release and a basis (AR5 GWP100, both
-excluding international aviation and shipping from the territorial side, per DEFRA's note 4).
+each area's territorial figure by a UK-wide ratio. This module reads the ratio's numerator, UK
+consumption-based emissions, from Figure_8 of DEFRA's "figures and tables" workbook (AR5 GWP100).
+Consumption-based emissions include emissions embedded in imports and exclude those from making
+exports (DEFRA's note 2).
 
-Deliberately consumption ÷ territorial, not consumption ÷ the UK-produced part of the footprint:
-the multiplier is applied to DESNZ *territorial* figures, so its denominator has to be territorial
-emissions too. (The other ratio comes out around 2.2 for 2022 rather than 1.8, and overstates the
-uplift.)
+The denominator is not read here: process.py sums every local authority's territorial emissions
+in the DESNZ CSV instead. Figure_8's own territorial column is the UK national inventory total,
+about 7% higher than the local-authority sum, because it includes emissions DESNZ doesn't assign to
+any local authority. It's kept in the output for reference.
+
+Deliberately consumption ÷ territorial, not consumption ÷ the UK-produced part of the footprint
+(Figure_3's split): the multiplier is applied to DESNZ *territorial* figures, so its denominator
+has to be territorial emissions too. (The other ratio comes out around 2.2 for 2022 and overstates
+the uplift.)
 
 The workbook is .ods, and the system Python has no ODS library, so this reads the OpenDocument XML
 directly with the standard library — an .ods file is a zip whose content.xml holds every sheet.
@@ -67,7 +72,7 @@ def _find_column(header, prefix):
 
 
 def parse_footprint(path):
-    """Returns {year: {"consumption_mt_co2e", "territorial_mt_co2e", "ratio"}} for every year
+    """Returns {year: {"consumption_mt_co2e", "territorial_mt_co2e"}} for every year
     Figure_8 covers. Finds columns by header prefix rather than position, since DEFRA's headers
     carry note markers ("[note 2]") and units that could shift between releases."""
     rows = read_ods_sheet(path, SHEET)
@@ -93,7 +98,6 @@ def parse_footprint(path):
         out[year] = {
             "consumption_mt_co2e": round(cons, 3),
             "territorial_mt_co2e": round(terr, 3),
-            "ratio": round(cons / terr, 4),
         }
     if not out:
         raise ValueError(f"No year rows parsed from {SHEET} — has DEFRA changed the table?")

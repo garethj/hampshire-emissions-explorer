@@ -21,13 +21,12 @@ class TestParseFootprint(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_ratio_uses_territorial_not_production_column(self):
+    def test_reads_consumption_and_territorial_not_production_column(self):
         # The fixture's production-based column is a constant 500; picking it by mistake (it sits
-        # between the other two) would give 700/500, not 700/400.
+        # between the other two) would give 500 for one of them.
         ods_fixture.write_footprint_ods(self.path, {2022: (700.0, 400.0)})
         out = footprint.parse_footprint(self.path)
-        self.assertEqual(list(out), [2022])
-        self.assertAlmostEqual(out[2022]["ratio"], 1.75, places=4)
+        self.assertEqual(out, {2022: {"consumption_mt_co2e": 700.0, "territorial_mt_co2e": 400.0}})
 
     def test_columns_found_by_header_not_position(self):
         original = ods_fixture.HEADER
@@ -38,7 +37,7 @@ class TestParseFootprint(unittest.TestCase):
         finally:
             ods_fixture.HEADER = original
         out = footprint.parse_footprint(self.path)
-        self.assertAlmostEqual(out[2022]["ratio"], 1.75, places=4)
+        self.assertEqual(out[2022], {"consumption_mt_co2e": 700.0, "territorial_mt_co2e": 400.0})
 
     def test_preamble_and_padding_rows_are_skipped(self):
         ods_fixture.write_footprint_ods(self.path, {2020: (720.0, 410.0), 2021: (690.0, 420.0)})

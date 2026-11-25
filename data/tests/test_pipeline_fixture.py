@@ -41,6 +41,9 @@ SECTORS_SUBS = {
     "Agriculture": ["Agriculture Livestock"],
 }
 GASES = ["CO2", "CH4", "N2O"]
+# A local authority outside Hampshire: process.py must ignore it for every region but still count
+# it in the UK local-authority total that the footprint ratio divides by.
+OTHER_LAS = ["Hartlepool"]
 
 
 def la_base_value(la, year, sector, gas):
@@ -58,9 +61,9 @@ def write_fixture_csv(path):
             "Area (km2)",
         ])
         writer.writeheader()
-        for la in lc.ALL_LAS:
+        for la in lc.ALL_LAS + OTHER_LAS:
             for year in YEARS:
-                pop = 100.0 + lc.ALL_LAS.index(la)
+                pop = 100.0 + (lc.ALL_LAS + OTHER_LAS).index(la)
                 for sector, subs in SECTORS_SUBS.items():
                     for sub in subs:
                         for gas in GASES:
@@ -160,13 +163,23 @@ class TestProcessPipelineFixture(unittest.TestCase):
         actual = self.out["regions"]["hampshire-solent"]["years"][str(year)]["total_kt_co2e"]
         self.assertAlmostEqual(actual, expected, places=2)
 
-    def test_uk_footprint_ratio_is_consumption_over_territorial(self):
+    def test_uk_footprint_ratio_divides_by_every_local_authority_not_the_national_total(self):
+        # The ratio is applied to local-authority figures, so its denominator is the sum of every
+        # local authority in the CSV (including ones no region here uses), not DEFRA's national
+        # territorial total (400 in the fixture), which counts emissions no local authority has.
         fp = self.out["meta"]["uk_footprint"]
         self.assertEqual(fp["edition"], FOOTPRINT_TITLE)
         entry = fp["years"]["2020"]
-        self.assertAlmostEqual(entry["ratio"], 700.0 / 400.0, places=4)
+        la_sum_mt = expected_region_total(lc.ALL_LAS + OTHER_LAS, None, 2020) / 1000
+        self.assertAlmostEqual(entry["la_territorial_mt_co2e"], la_sum_mt, places=3)
+        self.assertAlmostEqual(entry["ratio"], 700.0 / la_sum_mt, delta=0.01 * 700.0 / la_sum_mt)
         self.assertEqual(entry["consumption_mt_co2e"], 700.0)
         self.assertEqual(entry["territorial_mt_co2e"], 400.0)
+
+    def test_local_authorities_outside_hampshire_dont_leak_into_regions(self):
+        hs = self.out["regions"]["hampshire-solent"]
+        self.assertNotIn("Hartlepool", hs["las"])
+        self.assertNotIn("Hartlepool", self.out["areas_km2"])
 
     def test_uk_footprint_keeps_only_overlapping_years_and_never_carries_forward(self):
         # 2019 is outside the DESNZ fixture's years; 2021 is a DESNZ year DEFRA hasn't covered.

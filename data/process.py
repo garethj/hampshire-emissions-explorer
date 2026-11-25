@@ -29,14 +29,18 @@ detail_gas = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
 detail_gas_gwp20 = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
 population = defaultdict(dict)
 area = {}
+# Territorial emissions summed over every local authority in the CSV, not just the ones this site
+# shows: the denominator of the estimated-footprint ratio (see uk_footprint below).
+uk_la_total_kt = defaultdict(float)
 
 with open(SRC, newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
         la = row["Local Authority"]
+        year = int(row["Calendar Year"])
+        uk_la_total_kt[year] += float(row["Territorial emissions (kt CO2e)"])
         if la not in ALL_LAS:
             continue
-        year = int(row["Calendar Year"])
         sector = row["LA GHG Sector"]
         subsector = row["LA GHG Sub-sector"]
         gas = row["Greenhouse gas"]
@@ -51,17 +55,29 @@ with open(SRC, newline="", encoding="utf-8") as f:
 years = sorted(detail.keys())
 sectors = sorted({s for y in detail for la in detail[y] for s in detail[y][la]})
 
-# UK consumption-based ÷ territorial emissions per year (see footprint.py), kept only for years this
-# site's own DESNZ data also covers. Years DESNZ has but DEFRA doesn't yet (DEFRA runs about a year
-# behind) are left out rather than carried forward, so the app's estimated-footprint line simply
-# stops at DEFRA's latest year.
+# Estimated-footprint ratio per year: UK consumption-based emissions (DEFRA's Figure 8) divided by
+# the sum of every local authority's territorial emissions in this same DESNZ CSV. Not DEFRA's own
+# UK territorial column: that's the national inventory total, about 7% higher, because it includes
+# emissions DESNZ doesn't assign to any local authority. Dividing by the local-authority sum keeps
+# the ratio on the same basis as the figures it's applied to, so every UK area's estimated
+# footprint adds up to the UK footprint. Kept only for years both sources cover: years DESNZ has
+# but DEFRA doesn't yet (DEFRA runs about a year behind) are left out rather than carried forward,
+# so the app's estimated-footprint line simply stops at DEFRA's latest year.
 uk_footprint_years = footprint.parse_footprint(FOOTPRINT_SRC)
 uk_footprint = {
     "source": footprint.SOURCE_LABEL,
     "source_url": footprint.SOURCE_URL,
     "edition": footprint.published_title(FOOTPRINT_SRC),
-    "note": "UK-wide consumption-based and territorial emissions (Mt CO2e, AR5 GWP100) from DEFRA's Figure 8, and their ratio. The app multiplies each region's DESNZ territorial figure by that year's ratio to estimate its footprint including emissions embedded in imports. No consumption-based data is published below UK level, so every region gets the same national ratio.",
-    "years": {y: v for y, v in sorted(uk_footprint_years.items()) if y in detail},
+    "note": "consumption_mt_co2e is UK consumption-based emissions and territorial_mt_co2e the UK national territorial total, both from DEFRA's Figure 8 (Mt CO2e, AR5 GWP100). la_territorial_mt_co2e is the sum of every UK local authority's territorial emissions in the DESNZ local dataset, which leaves out emissions not assigned to any local authority. ratio = consumption_mt_co2e / la_territorial_mt_co2e. The app multiplies each region's DESNZ territorial figure by that year's ratio to estimate its consumption-based footprint: including emissions embedded in imports, excluding those from making exports. No consumption-based data is published below UK level, so every region gets the same national ratio.",
+    "years": {
+        y: {
+            "consumption_mt_co2e": v["consumption_mt_co2e"],
+            "territorial_mt_co2e": v["territorial_mt_co2e"],
+            "la_territorial_mt_co2e": round(uk_la_total_kt[y] / 1000, 3),
+            "ratio": round(v["consumption_mt_co2e"] / (uk_la_total_kt[y] / 1000), 4),
+        }
+        for y, v in sorted(uk_footprint_years.items()) if y in detail
+    },
 }
 if not uk_footprint["years"]:
     sys.exit(f"{FOOTPRINT_SRC} shares no years with {SRC} — wrong file?")

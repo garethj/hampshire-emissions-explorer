@@ -12,7 +12,7 @@
   let currentConsumptionDetail = false; // show consumption chart as all fuel types instead of simple groups
   let currentConsumptionView = "fuel"; // "fuel" (by fuel type) | "sector" (by Domestic/Transport/Industrial)
   let currentHorizon = "gwp100"; // "gwp100" (official DESNZ) | "gwp20"
-  // Whether the reader has ticked the trend chart's "estimated footprint incl. imports" box. Kept
+  // Whether the reader has ticked the trend chart's "estimated consumption footprint" box. Kept
   // separate from whether the line actually shows (footprintActive()), so switching to a view or
   // horizon where it's unavailable and back again restores their choice rather than clearing it.
   let footprintPref = false;
@@ -1085,7 +1085,7 @@
             trackMax(t, v, { region: r.key, year: year, category: null, value: v, horizon: horizon });
             if (withFootprint && horizon === "gwp100") {
               const fv = footprintValue(r.key, year, metric);
-              if (fv !== null) trackMax(t, fv, { region: r.key, year: year, category: "estimated footprint incl. imports", value: fv, horizon: horizon });
+              if (fv !== null) trackMax(t, fv, { region: r.key, year: year, category: "estimated consumption footprint", value: fv, horizon: horizon });
             }
           }
         }
@@ -1102,12 +1102,13 @@
     return trendGlobalMaxMetaCache[trendGlobalMaxKey(metric, onlyYear, withFootprint)];
   }
 
-  // ---------------- estimated footprint incl. imports ----------------
+  // ---------------- estimated consumption footprint ----------------
   // DESNZ's local figures are territorial only. The trend chart can add an estimate of each area's
-  // consumption-based footprint by multiplying its territorial figure by the UK-wide ratio of
-  // consumption-based to territorial emissions for that year (DEFRA/University of Leeds; see
-  // data/footprint.py). Null for years DEFRA doesn't cover yet, so the line stops there rather
-  // than carrying a stale ratio forward.
+  // consumption-based footprint (including imports, excluding exports) by multiplying its
+  // territorial figure by that year's UK-wide ratio: UK consumption-based emissions (DEFRA/University
+  // of Leeds) ÷ the sum of every UK local authority's territorial emissions (see data/process.py).
+  // Null for years DEFRA doesn't cover yet, so the line stops there rather than carrying a stale
+  // ratio forward.
   function ukFootprintRatio(year) {
     const fp = DATA.meta.uk_footprint;
     const entry = fp && fp.years[year];
@@ -1464,7 +1465,7 @@
           ttRow(tt, s.color, s.label, text);
           const fv = s.footprint && idx >= 0 ? s.footprint[idx] : null;
           if (fv !== null) {
-            ttSubRow(tt, "Incl. imports (est.)", fmtValue(metric, fv) + " " + unitShort(metric) + " (× " + ukFootprintRatio(year).toFixed(2) + ")", false, metric !== "per_capita");
+            ttSubRow(tt, "Consumption footprint (est.)", fmtValue(metric, fv) + " " + unitShort(metric) + " (× " + ukFootprintRatio(year).toFixed(2) + ")", false, metric !== "per_capita");
           }
           ttPopulationRow(tt, s.key, year, metric, false, true);
         });
@@ -1476,7 +1477,7 @@
     const legendWrap = document.createElement("div");
     legendWrap.className = "legend";
     series.forEach(s => legendWrap.appendChild(legendItemLine(s.color, s.label)));
-    if (showFootprint) legendWrap.appendChild(legendItemDashed("Estimated footprint incl. imports, to " + footprintLatestYear()));
+    if (showFootprint) legendWrap.appendChild(legendItemDashed("Estimated consumption footprint, to " + footprintLatestYear()));
     container.appendChild(legendWrap);
 
     buildTrendTableHistorical(years, series, metric);
@@ -1591,7 +1592,7 @@
     const htr = document.createElement("tr");
     const fpSeries = series.filter(s => s.footprint);
     ["Year"].concat(series.map(s => s.label + " (" + unitLabel(metric) + ")"))
-      .concat(fpSeries.map(s => s.label + " incl. imports, est. (" + unitLabel(metric) + ")")).forEach(h => {
+      .concat(fpSeries.map(s => s.label + " consumption footprint, est. (" + unitLabel(metric) + ")")).forEach(h => {
         const th = document.createElement("th"); th.textContent = h; htr.appendChild(th);
       });
     thead.appendChild(htr);
@@ -2655,7 +2656,7 @@
         "The chart shows the selected region in context: itself, the proposed unitary it rolls up to, and Hampshire and the Solent. Picking Eastleigh shows Eastleigh, South West Hampshire and Hampshire and the Solent.",
         "Tick \"Compare all constituents\" to see every sibling instead — all historic districts within the selected unitary, or all unitaries within Hampshire and the Solent.",
         "In the historical view, faint dashed lines are a straight-line pathway from each region's latest figure to zero at its own net-zero target.",
-        "Also in the historical view, tick \"Add estimated footprint incl. imports\" to add each region's emissions caused abroad by what its residents buy. See [[footprint-toggle|Estimated footprint including imports]]."
+        "Also in the historical view, tick \"Add estimated consumption footprint\" to add each region's emissions from what its residents buy, including imports. See [[footprint-toggle|Estimated consumption footprint]]."
       ],
       axisNote: () => trendScaleNoteText,
       method: [
@@ -2669,21 +2670,28 @@
       link: { href: "https://assets.publishing.service.gov.uk/media/6a3bacc9d52550a19950f2f5/2005-24-local-authority-ghg-emissions-csv-dataset.csv", label: "Download the source CSV" }
     },
     "footprint-toggle": {
-      title: "Estimated footprint including imports",
-      summary: "An estimate of each area's full carbon footprint, adding emissions released abroad to make the goods and services its residents buy, scaled from UK-wide figures.",
+      title: "Estimated consumption footprint",
+      summary: "An estimate of each area's consumption footprint: emissions from what its residents buy, including imports and excluding exports, scaled from UK-wide figures.",
       readIt: [
         "Each solid line is the official territorial figure: emissions released within the area's boundary. The bolder dashed line in the same colour is the estimated footprint.",
-        "The gap between them is mostly emissions embedded in imports, such as manufactured goods, food grown abroad and overseas services.",
+        "The gap between them is emissions embedded in imports, such as manufactured goods, food grown abroad and overseas services, less those from making UK exports, which count towards the buyers' footprints instead.",
         "Across the UK, the footprint has fallen much more slowly than territorial emissions, so territorial figures alone overstate progress.",
         "Available in the historical trend view on the 100-year time horizon. The dashed line stops at the latest year the UK-wide figures cover."
       ],
       method: [
-        ["Source", () => "University of Leeds for DEFRA, “" + (DATA.meta.uk_footprint.edition || "UK and England's carbon footprint") + "”, Figure 8: UK consumption-based and territorial greenhouse gas emissions."],
-        ["Basis", "Consumption-based emissions count everything emitted, in the UK or abroad, to supply the goods and services UK residents buy, plus their own home heating and driving. Emissions from UK-made goods that are exported are left out. Territorial emissions are what's released inside the UK's borders, the same basis as every other chart here. The UK territorial total leaves out international aviation and shipping, as DESNZ's local figures do, so the ratio's denominator matches what it's applied to."],
+        ["Source", () => "University of Leeds for DEFRA, “" + (DATA.meta.uk_footprint.edition || "UK and England's carbon footprint") + "”, Figure 8: UK consumption-based greenhouse gas emissions. The ratio's denominator comes from the same DESNZ local authority dataset as every other chart here."],
+        ["Basis", "Consumption-based emissions count everything emitted, in the UK or abroad, to supply the goods and services UK residents buy, plus their own home heating and driving. Emissions from making UK exports are left out, as they count towards the footprints of the countries that buy them (DEFRA's note 2). Territorial emissions are what's released inside the UK's borders, the same basis as every other chart here."],
         ["Calculated here", () => {
           const ly = footprintLatestYear();
-          return "No consumption-based data is published below UK level. For each year, this site divides UK consumption-based emissions by UK territorial emissions (" +
+          return "No consumption-based data is published below UK level. For each year, this site divides UK consumption-based emissions by the total territorial emissions of every UK local authority in DESNZ's local data (" +
             ukFootprintRatio(ly).toFixed(2) + " in " + ly + ") and multiplies each area's territorial figure by that ratio. Hover the chart to see the ratio for any year.";
+        }],
+        ["Denominator", () => {
+          const ly = footprintLatestYear();
+          const e = DATA.meta.uk_footprint.years[ly];
+          const gap = Math.round((1 - e.la_territorial_mt_co2e / e.territorial_mt_co2e) * 100);
+          return "DESNZ's local authority figures add up to " + gap + "% less than the UK's national territorial total in " + ly +
+            ", because the national total includes emissions DESNZ doesn't assign to any local authority. Dividing by the local authority total keeps the ratio on the same basis as the figures it multiplies, so every UK area's estimate adds up to the UK footprint.";
         }],
         ["UK-wide comparison", () => {
           const years = DATA.meta.uk_footprint.years;
@@ -2796,7 +2804,7 @@
         ["Update cycle", () => "DESNZ typically publishes new figures each summer, roughly 18–24 months behind the current year. This site's data was last refreshed " + formatIsoDate(DATA.meta.generated) + ", and is updated manually when a new release lands."],
         ["Comparing to other published figures", "DESNZ revises prior years' figures on every release, not just the newest year, so a district's total for a given year can shift slightly between releases. A figure quoted elsewhere — a council webpage, a climate action plan — may be citing an earlier DESNZ release than this site uses. Check the release date before assuming a discrepancy is an error in either source."],
         ["Energy data", "Renewable electricity generation by technology (2014–2024) and energy consumption by fuel (2005–2024), both from DESNZ at local authority level, aggregated to every region here the same way as the emissions figures. See [[generation-chart|Renewable electricity generation by technology]] and [[consumption-chart|Energy consumption by fuel]] for category grouping and unit conversions."],
-        ["Estimated footprint", "The trend chart's optional footprint line is the one figure not built from DESNZ local data alone. It scales each area's territorial figure by the UK-wide ratio of consumption-based to territorial emissions, from DEFRA's carbon footprint statistics. See [[footprint-toggle|Estimated footprint including imports]]."],
+        ["Estimated footprint", "The trend chart's optional footprint line is the one figure not built from DESNZ local data alone. It scales each area's territorial figure by a UK-wide ratio: UK consumption-based emissions, from DEFRA's carbon footprint statistics, divided by the total of every UK local authority's territorial emissions. See [[footprint-toggle|Estimated consumption footprint]]."],
         ["Data & code", "Every emissions figure traces back to the single published DESNZ CSV linked below, with the affected districts' contributions scaled using 2021 Census parish population shares. Apart from the optional footprint estimate above, nothing else here is estimated or modelled."],
         ["Licence", "Contains public sector information licensed under the Open Government Licence v3.0."]
       ],

@@ -1135,7 +1135,7 @@ test("proposed unitaries are labelled provisional in the region select", async (
   assert.ok(groups.includes("Proposed unitaries (provisional)"), `optgroups were: ${groups.join(", ")}`);
 });
 
-// ---------------- estimated footprint incl. imports ----------------
+// ---------------- estimated consumption footprint ----------------
 
 function setFootprint(window, on) {
   const box = window.document.getElementById("footprint-toggle");
@@ -1183,7 +1183,7 @@ test("footprint table columns are territorial × that year's UK ratio, and blank
   setFootprint(window, true);
 
   const header = Array.from(doc.querySelectorAll("#trend-table thead th")).map((th) => th.textContent);
-  const fpCol = header.findIndex((h) => /^Test Valley incl\. imports/.test(h));
+  const fpCol = header.findIndex((h) => /^Test Valley consumption footprint/.test(h));
   assert.ok(fpCol > 0, `expected a Test Valley footprint column, got ${JSON.stringify(header)}`);
 
   const rows = tableRows(window, "trend-table");
@@ -1222,7 +1222,29 @@ test("one footprint line per plotted region, and the fixed axis rises to fit the
   });
 
   fireClick(window, doc.querySelector('[data-info="trend-chart"]'));
-  assert.match(doc.querySelector('#modal-body dd[data-row="axis"]').textContent, /estimated footprint incl\. imports/);
+  assert.match(doc.querySelector('#modal-body dd[data-row="axis"]').textContent, /estimated consumption footprint/);
+});
+
+test("footprint dialog says exports are excluded and gives the ratio's local-authority denominator from the data", async () => {
+  // Phil pointed out that "incl. imports" read as territorial plus imports, and that DEFRA's UK
+  // territorial total doesn't match the sum of DESNZ's local authorities. The ratio divides by
+  // that local-authority sum, and the dialog must say so with figures that follow the data.
+  const dom = await loadApp({});
+  const { window } = dom;
+  const doc = window.document;
+  fireClick(window, doc.querySelector('[data-info="footprint-toggle"]'));
+  const body = doc.getElementById("modal-body").textContent;
+  assert.match(body, /including imports and excluding exports/);
+
+  const fp = getData(window).DATA.meta.uk_footprint;
+  const ly = Math.max(...Object.keys(fp.years).map(Number));
+  const e = fp.years[ly];
+  const gap = Math.round((1 - e.la_territorial_mt_co2e / e.territorial_mt_co2e) * 100);
+  const terms = Array.from(doc.querySelectorAll("#modal-body dt")).map((dt) => dt.textContent);
+  const denom = doc.querySelectorAll("#modal-body dd")[terms.indexOf("Denominator")];
+  assert.ok(denom, `expected a Denominator row, got ${JSON.stringify(terms)}`);
+  assert.match(denom.textContent, new RegExp(`${gap}% less than the UK's national territorial total in ${ly}`));
+  assert.match(body, new RegExp(`\\(${e.ratio.toFixed(2)} in ${ly}\\)`));
 });
 
 test("the work-in-progress chip and footer link both open the about dialog, with a contact link", async () => {

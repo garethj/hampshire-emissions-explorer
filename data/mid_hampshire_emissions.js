@@ -192,106 +192,125 @@ window.MHE_DATA = {
    "source": "University of Leeds for DEFRA, \u201cCarbon footprint for the UK and England\u201d",
    "source_url": "https://www.gov.uk/government/statistics/uks-carbon-footprint",
    "edition": "UK and England's carbon footprint, 1990 to 2023",
-   "note": "UK-wide consumption-based and territorial emissions (Mt CO2e, AR5 GWP100) from DEFRA's Figure 8, and their ratio. The app multiplies each region's DESNZ territorial figure by that year's ratio to estimate its footprint including emissions embedded in imports. No consumption-based data is published below UK level, so every region gets the same national ratio.",
+   "note": "consumption_mt_co2e is UK consumption-based emissions and territorial_mt_co2e the UK national territorial total, both from DEFRA's Figure 8 (Mt CO2e, AR5 GWP100). la_territorial_mt_co2e is the sum of every UK local authority's territorial emissions in the DESNZ local dataset, which leaves out emissions not assigned to any local authority. ratio = consumption_mt_co2e / la_territorial_mt_co2e. The app multiplies each region's DESNZ territorial figure by that year's ratio to estimate its consumption-based footprint: including emissions embedded in imports, excluding those from making exports. No consumption-based data is published below UK level, so every region gets the same national ratio.",
    "years": {
     "2005": {
      "consumption_mt_co2e": 956.538,
      "territorial_mt_co2e": 692.303,
-     "ratio": 1.3817
+     "la_territorial_mt_co2e": 655.802,
+     "ratio": 1.4586
     },
     "2006": {
      "consumption_mt_co2e": 960.499,
      "territorial_mt_co2e": 688.345,
-     "ratio": 1.3954
+     "la_territorial_mt_co2e": 650.666,
+     "ratio": 1.4762
     },
     "2007": {
      "consumption_mt_co2e": 983.799,
      "territorial_mt_co2e": 674.847,
-     "ratio": 1.4578
+     "la_territorial_mt_co2e": 636.308,
+     "ratio": 1.5461
     },
     "2008": {
      "consumption_mt_co2e": 914.14,
      "territorial_mt_co2e": 652.676,
-     "ratio": 1.4006
+     "la_territorial_mt_co2e": 616.532,
+     "ratio": 1.4827
     },
     "2009": {
      "consumption_mt_co2e": 819.942,
      "territorial_mt_co2e": 596.917,
-     "ratio": 1.3736
+     "la_territorial_mt_co2e": 561.324,
+     "ratio": 1.4607
     },
     "2010": {
      "consumption_mt_co2e": 839.269,
      "territorial_mt_co2e": 612.014,
-     "ratio": 1.3713
+     "la_territorial_mt_co2e": 575.132,
+     "ratio": 1.4593
     },
     "2011": {
      "consumption_mt_co2e": 822.141,
      "territorial_mt_co2e": 567.772,
-     "ratio": 1.448
+     "la_territorial_mt_co2e": 531.443,
+     "ratio": 1.547
     },
     "2012": {
      "consumption_mt_co2e": 836.265,
      "territorial_mt_co2e": 585.092,
-     "ratio": 1.4293
+     "la_territorial_mt_co2e": 550.346,
+     "ratio": 1.5195
     },
     "2013": {
      "consumption_mt_co2e": 824.552,
      "territorial_mt_co2e": 573.027,
-     "ratio": 1.4389
+     "la_territorial_mt_co2e": 539.217,
+     "ratio": 1.5292
     },
     "2014": {
      "consumption_mt_co2e": 815.133,
      "territorial_mt_co2e": 530.671,
-     "ratio": 1.536
+     "la_territorial_mt_co2e": 498.472,
+     "ratio": 1.6353
     },
     "2015": {
      "consumption_mt_co2e": 785.092,
      "territorial_mt_co2e": 510.692,
-     "ratio": 1.5373
+     "la_territorial_mt_co2e": 479.918,
+     "ratio": 1.6359
     },
     "2016": {
      "consumption_mt_co2e": 762.302,
      "territorial_mt_co2e": 483.212,
-     "ratio": 1.5776
+     "la_territorial_mt_co2e": 451.88,
+     "ratio": 1.687
     },
     "2017": {
      "consumption_mt_co2e": 713.271,
      "territorial_mt_co2e": 471.822,
-     "ratio": 1.5117
+     "la_territorial_mt_co2e": 441.122,
+     "ratio": 1.6169
     },
     "2018": {
      "consumption_mt_co2e": 746.624,
      "territorial_mt_co2e": 464.054,
-     "ratio": 1.6089
+     "la_territorial_mt_co2e": 434.671,
+     "ratio": 1.7177
     },
     "2019": {
      "consumption_mt_co2e": 730.472,
      "territorial_mt_co2e": 447.514,
-     "ratio": 1.6323
+     "la_territorial_mt_co2e": 419.146,
+     "ratio": 1.7428
     },
     "2020": {
      "consumption_mt_co2e": 630.807,
      "territorial_mt_co2e": 407.536,
-     "ratio": 1.5479
+     "la_territorial_mt_co2e": 383.631,
+     "ratio": 1.6443
     },
     "2021": {
      "consumption_mt_co2e": 682.044,
      "territorial_mt_co2e": 422.193,
-     "ratio": 1.6155
+     "la_territorial_mt_co2e": 399.853,
+     "ratio": 1.7057
     },
     "2022": {
      "consumption_mt_co2e": 726.574,
      "territorial_mt_co2e": 403.968,
-     "ratio": 1.7986
+     "la_territorial_mt_co2e": 375.812,
+     "ratio": 1.9333
     },
     "2023": {
      "consumption_mt_co2e": 699.202,
      "territorial_mt_co2e": 383.935,
-     "ratio": 1.8211
+     "la_territorial_mt_co2e": 359.973,
+     "ratio": 1.9424
     }
    }
   },
-  "generated": "2026-11-15"
+  "generated": "2026-11-25"
  },
  "areas_km2": {
   "Portsmouth": 60.1359,
