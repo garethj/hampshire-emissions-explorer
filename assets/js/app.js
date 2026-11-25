@@ -3192,9 +3192,10 @@
 
   // The GitHub Pages copy is the development version shared for feedback; the public version is
   // a packaged release (package_site.py) copied to a separate host. Detected by hostname rather
-  // than a per-deploy config file, so both copies can be byte-identical. PUBLIC_URL stays empty
-  // until the public host is settled; once set, the dev banner links to it.
-  const PUBLIC_URL = "";
+  // than a per-deploy config file, so both copies can be byte-identical. The dev banner links to
+  // PUBLIC_URL, where a release is (or should be) hosted, so anyone who lands on the dev copy can
+  // find the stable one.
+  const PUBLIC_URL = "https://cann.network/emissions";
 
   function deploymentKind(hostname) {
     return /(^|\.)github\.io$/i.test(hostname || "") ? "dev" : "public";

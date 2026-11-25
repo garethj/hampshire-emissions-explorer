@@ -1066,6 +1066,9 @@ test("the development banner shows on the GitHub Pages copy only", async () => {
   const dev = await loadApp({ base: "https://garethj.github.io/hampshire-emissions-explorer/" });
   assert.ok(!dev.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
     "the GitHub Pages copy is the development version and should say so");
+  const publicLink = dev.window.document.querySelector("#dev-banner a");
+  assert.ok(publicLink, "the dev banner should link to the public version");
+  assert.equal(publicLink.getAttribute("href"), "https://cann.network/emissions");
   assert.deepEqual(dev.errors, []);
 
   for (const base of ["http://localhost/", "https://emissions.example.org/explorer/"]) {
