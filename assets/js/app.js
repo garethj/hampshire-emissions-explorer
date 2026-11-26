@@ -3199,18 +3199,21 @@
   }
 
   // The GitHub Pages copy is the development version shared for feedback; the public version is
-  // a packaged release (package_site.py) copied to a separate host. Detected by hostname rather
+  // a packaged release (package_site.py) that release.py publishes to its own repo, whose Pages
+  // site lives under RELEASE_PATH until a custom domain is set. Detected by host and path rather
   // than a per-deploy config file, so both copies can be byte-identical. The dev banner links to
   // PUBLIC_URL, where a release is (or should be) hosted, so anyone who lands on the dev copy can
   // find the stable one.
   const PUBLIC_URL = "https://cann.network/emissions";
+  const RELEASE_PATH = "/hampshire-emissions-explorer-release/";
 
-  function deploymentKind(hostname) {
-    return /(^|\.)github\.io$/i.test(hostname || "") ? "dev" : "public";
+  function deploymentKind(hostname, pathname) {
+    if (!/(^|\.)github\.io$/i.test(hostname || "")) return "public";
+    return (pathname || "").toLowerCase().startsWith(RELEASE_PATH) ? "public" : "dev";
   }
 
   function showDevBanner() {
-    if (deploymentKind(location.hostname) !== "dev") return;
+    if (deploymentKind(location.hostname, location.pathname) !== "dev") return;
     const banner = document.getElementById("dev-banner");
     if (PUBLIC_URL) {
       banner.append(" ");

@@ -2,7 +2,7 @@
 
 A small, static, client-side dashboard comparing greenhouse gas emissions across every Hampshire local authority and every proposed future unitary — 20 regions in four tiers: the 11 historic districts and 3 current unitaries (Portsmouth, Southampton, Isle of Wight) as they exist today; Hampshire, the county council area those 11 districts sit within (i.e. everything except Portsmouth, Southampton and Isle of Wight); the four unitary authorities the Government chose in March 2026 to replace all 14 current districts/unitaries (North Hampshire, Mid-Hampshire, South East Hampshire, South West Hampshire), shown as provisional since that decision was withdrawn for review; and Hampshire and the Solent, the Combined County Authority sitting above all of them. Built for the Hampshire Local Government Reorganisation working group, and branded as a [WinACC](https://www.winacc.org.uk/) (Winchester Action on the Climate Crisis) tool.
 
-Development version: hosted on GitHub Pages from this repo's `main` branch, `/` root, at <https://garethj.github.io/hampshire-emissions-explorer/>. It shows a slim "Development version" banner (`deploymentKind()` in `app.js` recognises any `*.github.io` host); any other host shows no banner. The banner links to the public version at <https://cann.network/emissions> (`PUBLIC_URL` in `app.js`), which should host a packaged release (see "Publishing a release to the public host"), not the GitHub Pages copy. The repo was originally `mid-hampshire-emissions`; the old Pages address, <https://garethj.github.io/mid-hampshire-emissions/>, still works, because a separate [`garethj/mid-hampshire-emissions`](https://github.com/garethj/mid-hampshire-emissions) repo now holds just a redirect page pointing here.
+Development version: hosted on GitHub Pages from this repo's `main` branch, `/` root, at <https://garethj.github.io/hampshire-emissions-explorer/>. It shows a slim "Development version" banner (`deploymentKind()` in `app.js` recognises any `*.github.io` host except the release copy's path, `RELEASE_PATH`); any other host shows no banner. The banner links to the public version at <https://cann.network/emissions> (`PUBLIC_URL` in `app.js`), which should show a packaged release (see "Publishing a release to the public host"), not the development copy. The repo was originally `mid-hampshire-emissions`; the old Pages address, <https://garethj.github.io/mid-hampshire-emissions/>, still works, because a separate [`garethj/mid-hampshire-emissions`](https://github.com/garethj/mid-hampshire-emissions) repo now holds just a redirect page pointing here.
 
 ## What it is
 
@@ -82,13 +82,15 @@ Then commit whichever of the four output files `refresh_data.py` reports as rege
 
 ## Publishing a release to the public host
 
-The public version is a copy of the site on a separate host; GitHub Pages stays the development version. To make a release, from a clean `main`:
+The public version is a packaged release served by GitHub Pages from a separate repo, [`garethj/hampshire-emissions-explorer-release`](https://github.com/garethj/hampshire-emissions-explorer-release), at <https://garethj.github.io/hampshire-emissions-explorer-release/>. That repo holds only the current release's site files, one commit per release; all history stays here. This repo's own Pages site stays the development version. To make a release, from a clean `main`:
 
 ```
 python3 release.py
 ```
 
-It runs the fast tests, lists the commits since the last release, and proposes the next version. Press Enter to accept it, or type your own (`v2.0.0`), or `major` / `minor` / `patch`. Versions are `vMAJOR.MINOR.PATCH`: major for a change that breaks how people use or link to the site (e.g. different geography, changed `?region=` keys), minor for new features or a new year of DESNZ data (the default proposal), patch for fixes and wording. It then creates an annotated git tag, with the commit list as release notes, and builds `dist/hampshire-emissions-explorer-<version>.zip` (gitignored). Finally it asks before pushing the tag and creating a GitHub Release with the zip attached (needs the `gh` CLI). Answer no to keep it all local; it prints the commands to publish later, or to delete the tag.
+It runs the fast tests, lists the commits since the last release, and proposes the next version. Press Enter to accept it, or type your own (`v2.0.0`), or `major` / `minor` / `patch`. Versions are `vMAJOR.MINOR.PATCH`: major for a change that breaks how people use or link to the site (e.g. different geography, changed `?region=` keys), minor for new features or a new year of DESNZ data (the default proposal), patch for fixes and wording. It then creates an annotated git tag, with the commit list as release notes, and builds `dist/hampshire-emissions-explorer-<version>.zip` (gitignored). Finally it asks before pushing the tag, creating a GitHub Release with the zip attached (needs the `gh` CLI), and publishing the site to the public host: it clones the release repo to a temporary folder, replaces everything except that repo's own `README.md`, `CNAME` (the Pages custom domain, once there is one) and `.nojekyll` with the zip's contents, commits it as `Publish <version>`, and pushes. Answer no to keep it all local; it prints the commands to publish later, or to delete the tag.
+
+To publish an existing release to the host again, for example to roll back to it, run `python3 release.py --publish v1.0.1`. It asks before replacing what the host serves.
 
 The zip contains only what the browser loads: `index.html`, `assets/`, and the two `data/*.js` files. The scripts, tests, raw data and docs are left out. Files come from the tagged commit, not the working tree. Unzip it onto the host as is: every path is relative, so it works at a domain root or in a sub-folder. The packaged `index.html` has the version stamped into its footer (replacing `<!-- site-version -->`), linked to that version's GitHub Release notes. The repo's own `index.html`, which GitHub Pages serves, shows no version, since it's always the latest commit.
 
@@ -113,7 +115,7 @@ data/tests/            Python: la_config.py structure, pipeline fixture tests (p
 
 tests/py/               Python: checks package_site.py's allowlist includes every file index.html and style.css
                         load and nothing outside the site, the footer version stamp, and release.py's
-                        version proposal and validation.
+                        version proposal and validation, and how it replaces the public host's files.
                         Run: npm run test:py
 
 tests/js/               jsdom integration tests against the real index.html + app.js — drives every one of

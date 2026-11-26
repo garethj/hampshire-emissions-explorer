@@ -1071,7 +1071,8 @@ test("the development banner shows on the GitHub Pages copy only", async () => {
   assert.equal(publicLink.getAttribute("href"), "https://cann.network/emissions");
   assert.deepEqual(dev.errors, []);
 
-  for (const base of ["http://localhost/", "https://emissions.example.org/explorer/"]) {
+  for (const base of ["http://localhost/", "https://emissions.example.org/explorer/",
+    "https://garethj.github.io/hampshire-emissions-explorer-release/"]) {
     const pub = await loadApp({ base });
     assert.ok(pub.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
       `no dev banner expected at ${base}`);
