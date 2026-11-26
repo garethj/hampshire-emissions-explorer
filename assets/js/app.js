@@ -3198,18 +3198,21 @@
     }
   }
 
-  // The GitHub Pages copy is the development version shared for feedback; the public version is
-  // a packaged release (package_site.py) that release.py publishes to its own repo, whose Pages
-  // site lives under RELEASE_PATH until a custom domain is set. Detected by host and path rather
-  // than a per-deploy config file, so both copies can be byte-identical. The dev banner links to
-  // PUBLIC_URL, where a release is (or should be) hosted, so anyone who lands on the dev copy can
-  // find the stable one.
+  // The development version is this repo's own GitHub Pages copy, at exactly DEV_HOST/DEV_PATH,
+  // shared for feedback. Every other copy is a packaged release (package_site.py), wherever it's
+  // hosted (the release repo's Pages site, a custom domain, another organisation's server), so
+  // only that one address is recognised rather than a list of release hosts. Detected by address
+  // rather than a per-deploy flag, so the release ships the same code the tests ran against. The
+  // dev banner links to PUBLIC_URL, where a release is hosted, so anyone who lands on the dev copy
+  // can find the stable one.
   const PUBLIC_URL = "https://cann.network/emissions";
-  const RELEASE_PATH = "/hampshire-emissions-explorer-release/";
+  const DEV_HOST = "garethj.github.io";
+  const DEV_PATH = "hampshire-emissions-explorer";
 
   function deploymentKind(hostname, pathname) {
-    if (!/(^|\.)github\.io$/i.test(hostname || "")) return "public";
-    return (pathname || "").toLowerCase().startsWith(RELEASE_PATH) ? "public" : "dev";
+    const firstSegment = (pathname || "").split("/")[1] || "";
+    return (hostname || "").toLowerCase() === DEV_HOST && firstSegment.toLowerCase() === DEV_PATH
+      ? "dev" : "public";
   }
 
   function showDevBanner() {

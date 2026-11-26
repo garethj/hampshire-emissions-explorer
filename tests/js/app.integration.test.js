@@ -1062,7 +1062,7 @@ test("following a cross-reference shows a breadcrumb back to where it came from"
   assert.ok(back.classList.contains("is-hidden"), "closing the dialog should clear the trail");
 });
 
-test("the development banner shows on the GitHub Pages copy only", async () => {
+test("the development banner shows on the development GitHub Pages copy only", async () => {
   const dev = await loadApp({ base: "https://garethj.github.io/hampshire-emissions-explorer/" });
   assert.ok(!dev.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
     "the GitHub Pages copy is the development version and should say so");
@@ -1071,8 +1071,11 @@ test("the development banner shows on the GitHub Pages copy only", async () => {
   assert.equal(publicLink.getAttribute("href"), "https://cann.network/emissions");
   assert.deepEqual(dev.errors, []);
 
+  // Releases, wherever they're hosted, including another github.io site and one whose path
+  // merely starts with the dev repo's name.
   for (const base of ["http://localhost/", "https://emissions.example.org/explorer/",
-    "https://garethj.github.io/hampshire-emissions-explorer-release/"]) {
+    "https://garethj.github.io/hampshire-emissions-explorer-release/",
+    "https://someone-else.github.io/hampshire-emissions-explorer/"]) {
     const pub = await loadApp({ base });
     assert.ok(pub.window.document.getElementById("dev-banner").classList.contains("is-hidden"),
       `no dev banner expected at ${base}`);
