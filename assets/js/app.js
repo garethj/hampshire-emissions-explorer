@@ -3205,7 +3205,7 @@
   // rather than a per-deploy flag, so the release ships the same code the tests ran against. The
   // dev banner links to PUBLIC_URL, where a release is hosted, so anyone who lands on the dev copy
   // can find the stable one.
-  const PUBLIC_URL = "https://cann.network/emissions";
+  const PUBLIC_URL = "https://garethj.github.io/hampshire-emissions-explorer-release/";
   const DEV_HOST = "garethj.github.io";
   const DEV_PATH = "hampshire-emissions-explorer";
 

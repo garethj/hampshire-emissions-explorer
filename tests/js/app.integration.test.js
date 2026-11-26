@@ -1068,7 +1068,7 @@ test("the development banner shows on the development GitHub Pages copy only", a
     "the GitHub Pages copy is the development version and should say so");
   const publicLink = dev.window.document.querySelector("#dev-banner a");
   assert.ok(publicLink, "the dev banner should link to the public version");
-  assert.equal(publicLink.getAttribute("href"), "https://cann.network/emissions");
+  assert.equal(publicLink.getAttribute("href"), "https://garethj.github.io/hampshire-emissions-explorer-release/");
   assert.deepEqual(dev.errors, []);
 
   // Releases, wherever they're hosted, including another github.io site and one whose path
